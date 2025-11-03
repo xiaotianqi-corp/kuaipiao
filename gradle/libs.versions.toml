@@ -1,0 +1,467 @@
+[versions]
+# Android and Application Build Tools
+agp = "8.12.3"
+android-compileSdk = "36"
+android-minSdk = "24"
+android-targetSdk = "36"
+
+# AndroidX Components
+androidx-activity = "1.11.0"
+androidx-appcompat = "1.7.1"
+androidx-core = "1.17.0"
+androidx-espresso = "3.7.0"
+androidx-lifecycle = "2.9.5"
+androidx-testExt = "1.3.0"
+
+# Compose and UI
+composeMultiplatform = "1.9.2"
+composeHotReload = "1.0.0-rc02"
+
+# Testing
+junit = "4.13.2"
+ktorTests = "3.1.2-eap-1251"
+testcontainers = "1.21.3"
+
+# Core Technologies
+kotlin = "2.2.21"
+ktor = "3.3.1"
+logback = "1.5.20"
+koin = "4.1.1"
+koog = "0.5.2"
+slf4j = "2.0.17"
+koin-ksp = "2.3.0"
+classgraph = "4.8.184"
+
+# Kotlin Extensions
+kotlinx-serialization = "1.9.0"
+kotlinx-datetime = "0.7.1-0.6.x-compat"
+kotlinx-coroutines = "1.10.2"
+
+# Messaging and communication
+amqp-client = "5.27.0"
+
+# Swagger for API documentation
+ktor-swagger = "5.3.0"
+
+# API and GraphQL
+graphql-kotlin = "8.8.1"
+
+# Validation and schema
+json-schema-generator = "4.38.0"
+konform = "0.11.1"
+
+# Security
+auth0-jwt = "4.5.0"
+bcrypt = "0.4"
+
+# Database and Storage
+hikari = "7.0.2"
+postgres = "42.7.8"
+exposed = "0.61.0"
+flyway = "11.15.0"
+h2 = "2.4.240"
+kafka = "2.2.1"
+
+# iCal recurrence library
+lib-recur = "0.17.1"
+
+# Caching
+caffeine = "3.2.3"
+redis = "6.8.1.RELEASE"
+
+# Monitoring and Metrics
+prometheusClient = "0.16.0"
+prometheus = "1.15.5"
+khealth = "3.0.2"
+kotlinLogging = "7.0.13"
+
+# Resilience4j
+resilience4j = "2.3.0"
+
+# XML Processing
+xml = "0.91.3"
+xades4j = "1.82"
+jaxb-api = "2.3.1"
+santuario = "4.0.4"
+encoder = "1.3.1"
+
+# Google Cloud y Firebase
+google-cloud-bom = "26.71.0"
+google-api-client = "2.8.1"
+firebase-admin = "9.3.0"
+
+# ENV
+dotenv = "6.4.1"
+
+[libraries]
+# --- Core Kotlin Libraries ---
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+
+# --- Dependency Injection / Logging ---
+koog-ktor = { module = "ai.koog:koog-ktor", version.ref = "koog" }
+koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
+koin-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-ksp" }
+ktor-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph"}
+
+# --- Ktor Client ---
+ktor-client-apache = { module = "io.ktor:ktor-client-apache", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor"}
+ktor-clientLogging = { module = "io.ktor:ktor-client-logging-jvm", version.ref = "ktor" }
+
+# --- Ktor Network ---
+ktor-network-tls = { module = "io.ktor:ktor-network-tls", version.ref = "ktor" }
+
+# --- Ktor Serialization ---
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# --- Ktor Server ---
+ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
+ktor-server-caching-headers = { module = "io.ktor:ktor-server-caching-headers", version.ref = "ktor" }
+ktor-server-call-id = { module = "io.ktor:ktor-server-call-id", version.ref = "ktor" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-server-compression = { module = "io.ktor:ktor-server-compression-jvm", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-server-csrf = { module = "io.ktor:ktor-server-csrf", version.ref = "ktor" }
+ktor-server-default-headers = { module = "io.ktor:ktor-server-default-headers-jvm", version.ref = "ktor" }
+ktor-server-di = { module = "io.ktor:ktor-server-di", version.ref = "ktor" }
+ktor-server-double-receive = { module = "io.ktor:ktor-server-double-receive", version.ref = "ktor" }
+ktor-server-forwarded-headers = { module = "io.ktor:ktor-server-forwarded-header", version.ref = "ktor" }
+ktor-server-hsts = { module = "io.ktor:ktor-server-hsts", version.ref = "ktor" }
+ktor-server-http-redirect = { module = "io.ktor:ktor-server-http-redirect", version.ref = "ktor" }
+ktor-server-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version.ref = "kafka" }
+ktor-server-metrics = { module = "io.ktor:ktor-server-metrics", version.ref = "ktor" }
+ktor-server-metrics-jvm = { module = "io.ktor:ktor-server-metrics-jvm", version.ref = "ktor" }
+ktor-serverMetricsMicrometer = { module = "io.ktor:ktor-server-metrics-micrometer", version.ref = "ktor" }
+ktor-serverMetricsPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-partial-content = { module = "io.ktor:ktor-server-partial-content-jvm", version.ref = "ktor" }
+ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validation", version.ref = "ktor" }
+ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
+ktor-server-conditional-headers = { module = "io.ktor:ktor-server-conditional-headers-jvm", version.ref = "ktor" }
+ktor-server-resources = { module = "io.ktor:ktor-server-resources", version.ref = "ktor"}
+
+# --- Android and AndroidX Libraries ---
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+
+# --- Database and Storage Libraries ---
+hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+
+# --- Messaging and communication ---
+amqp-client = { module = "com.rabbitmq:amqp-client", version.ref = "amqp-client" }
+
+# --- Swagger UI para Ktor ---
+ktor-swagger = { module = "io.github.smiley4:ktor-swagger-ui", version.ref = "ktor-swagger" }
+
+# --- Validation and generation of JSON schemas ---
+json-schema-generator = { module = "com.github.victools:jsonschema-generator", version.ref = "json-schema-generator" }
+konform = { module = "io.konform:konform", version.ref = "konform" }
+
+# --- iCal recurrence library ---
+lib-recur = { module = "org.dmfs:lib-recur", version.ref = "lib-recur" }
+
+# --- Google Cloud and APIs ---
+google-cloud-bom = { module = "com.google.cloud:libraries-bom", version.ref = "google-cloud-bom" }
+google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "google-api-client" }
+
+# --- Firebase Admin SDK ---
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebase-admin" }
+
+# --- Caching Libraries ---
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+redis = { module = "io.lettuce:lettuce-core", version.ref = "redis" }
+
+# --- Security Libraries ---
+auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
+bcrypt = { module = "org.mindrot:jbcrypt", version.ref = "bcrypt" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+# --- Monitoring and Logging Libraries ---
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+prometheus = { module = "io.prometheus:simpleclient", version.ref = "prometheusClient" }
+khealth = { module = "dev.hayden:khealth", version.ref = "khealth" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlinLogging"}
+
+# --- Resilience4j Libraries ---
+resilience4j-core = { module = "io.github.resilience4j:resilience4j-core", version.ref = "resilience4j" }
+resilience4j-timelimiter = { module = "io.github.resilience4j:resilience4j-timelimiter", version.ref = "resilience4j" }
+resilience4j-bulkhead = { module = "io.github.resilience4j:resilience4j-bulkhead", version.ref = "resilience4j" }
+resilience4j-ratelimiter = { module = "io.github.resilience4j:resilience4j-ratelimiter", version.ref = "resilience4j" }
+resilience4j-retry = { module = "io.github.resilience4j:resilience4j-retry", version.ref = "resilience4j" }
+resilience4j-kotlin = { module = "io.github.resilience4j:resilience4j-kotlin", version.ref = "resilience4j" }
+resilience4j-circuitbreaker = { module = "io.github.resilience4j:resilience4j-circuitbreaker", version.ref = "resilience4j" }
+
+# --- GraphQL Libraries ---
+graphql-kotlin-server-ktor = { module = "com.expediagroup:graphql-kotlin-ktor-server", version.ref = "graphql-kotlin" }
+graphql-kotlin-schema-generator = { module = "com.expediagroup:graphql-kotlin-schema-generator", version.ref = "graphql-kotlin" }
+
+# --- XML Processing Libraries ---
+xml = { module = "io.github.pdvrieze.xmlutil:serialization", version.ref = "xml" }
+xades4j = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "xades4j" }
+jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-api" }
+santuario = { module = "org.apache.santuario:xmlsec", version.ref = "santuario" }
+encoder = { module = "org.owasp.encoder:encoder", version.ref = "encoder" }
+
+# --- Testing Libraries ---
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+junit = { module = "junit:junit", version.ref = "junit" }
+
+# --- Testing Containers ---
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
+
+# --- ENV Variables ---
+dotenv = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv" }
+
+# ============================================
+# BUNDLES (Dependency Groups)
+# ============================================
+
+[bundles]
+
+# --------------------------------------------
+# Core Kotlin
+# --------------------------------------------
+kotlin = [
+    "kotlin-stdlib",
+    "kotlinx-serialization-core",
+    "kotlinx-serialization-json",
+    "kotlinx-datetime",
+    "kotlinx-coroutines-core",
+    "kotlinx-coroutines-swing"
+]
+
+# --------------------------------------------
+# Dependency Injection / Logging
+# --------------------------------------------
+di = [
+    "koog-ktor",
+    "koin-ktor",
+    "koin-logger-slf4j",
+    "koin-ksp",
+    "ktor-classgraph"
+]
+
+# --------------------------------------------
+# Ktor Client
+# --------------------------------------------
+ktor-client = [
+    "ktor-client-core",
+    "ktor-client-apache",
+    "ktor-client-cio",
+    "ktor-clientLogging",
+    "ktor-serialization-kotlinx-json",
+    "ktor-network-tls",
+    "ktor-client-content-negotiation"
+]
+
+# --------------------------------------------
+# Ktor Server
+# --------------------------------------------
+ktor-server = [
+    "ktor-server-core",
+    "ktor-server-netty",
+    "ktor-server-auth",
+    "ktor-server-auth-jwt",
+    "ktor-server-sessions",
+    "ktor-server-content-negotiation",
+    "ktor-server-cors",
+    "ktor-server-csrf",
+    "ktor-server-default-headers",
+    "ktor-server-compression",
+    "ktor-server-call-logging",
+    "ktor-server-call-id",
+    "ktor-server-status-pages",
+    "ktor-server-caching-headers",
+    "ktor-server-conditional-headers",
+    "ktor-server-partial-content",
+    "ktor-server-request-validation",
+    "ktor-server-double-receive",
+    "ktor-server-forwarded-headers",
+    "ktor-server-hsts",
+    "ktor-server-http-redirect",
+    "ktor-server-kafka",
+    "ktor-server-metrics",
+    "ktor-server-metrics-jvm",
+    "ktor-serverMetricsMicrometer",
+    "ktor-serverMetricsPrometheus",
+    "ktor-server-websockets",
+    "ktor-server-config-yaml",
+    "ktor-server-di",
+    "ktor-server-resources"
+]
+
+# --------------------------------------------
+# Android / AndroidX
+# --------------------------------------------
+androidx = [
+    "androidx-core-ktx",
+    "androidx-appcompat",
+    "androidx-activity-compose",
+    "androidx-lifecycle-viewmodelCompose",
+    "androidx-lifecycle-runtimeCompose",
+    "androidx-testExt-junit",
+    "androidx-espresso-core"
+]
+
+# --------------------------------------------
+# API Documentation / OpenAPI
+# --------------------------------------------
+swagger = [
+    "ktor-swagger"
+]
+
+# --------------------------------------------
+# Validation and Schema
+# --------------------------------------------
+validation = [
+    "konform",
+    "json-schema-generator"
+]
+
+# --------------------------------------------
+# Messaging (RabbitMQ)
+# --------------------------------------------
+messaging = [
+    "amqp-client"
+]
+
+# --------------------------------------------
+# Database / Storage
+# --------------------------------------------
+database = [
+    "hikari",
+    "postgresql",
+    "exposed-core",
+    "exposed-dao",
+    "exposed-jdbc",
+    "exposed-java-time",
+    "flyway-core",
+    "h2"
+]
+
+# --------------------------------------------
+# Caching
+# --------------------------------------------
+caching = [
+    "caffeine",
+    "redis"
+]
+
+# --------------------------------------------
+# Security
+# --------------------------------------------
+security = [
+    "auth0-java-jwt",
+    "bcrypt",
+    "slf4j-api"
+]
+
+# --------------------------------------------
+# Monitoring / Logging
+# --------------------------------------------
+monitoring = [
+    "logback-classic",
+    "prometheus",
+    "khealth",
+    "kotlin-logging"
+]
+
+# --------------------------------------------
+# Resilience4j
+# --------------------------------------------
+resilience4j = [
+    "resilience4j-core",
+    "resilience4j-timelimiter",
+    "resilience4j-bulkhead",
+    "resilience4j-ratelimiter",
+    "resilience4j-retry",
+    "resilience4j-kotlin",
+    "resilience4j-circuitbreaker"
+]
+
+# --------------------------------------------
+# GraphQL
+# --------------------------------------------
+graphql = [
+    "graphql-kotlin-server-ktor",
+    "graphql-kotlin-schema-generator"
+]
+
+# --------------------------------------------
+# XML Processing
+# --------------------------------------------
+xmlx = [
+    "xml",
+    "xades4j",
+    "jaxb-api",
+    "santuario",
+    "encoder"
+]
+
+# --------------------------------------------
+# Google Cloud / Firebase
+# --------------------------------------------
+google = [
+    "google-cloud-bom",
+    "google-api-client",
+    "firebase-admin"
+]
+
+# --------------------------------------------
+# Calendar / Recurrence Utilities
+# --------------------------------------------
+calendar = [
+    "lib-recur"
+]
+
+# --------------------------------------------
+# Testing
+# --------------------------------------------
+testing = [
+    "kotlin-test",
+    "junit",
+    "ktor-server-test-host",
+    "kotlinx-coroutines-test",
+    "testcontainers-postgresql",
+    "testcontainers-kafka"
+]
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
