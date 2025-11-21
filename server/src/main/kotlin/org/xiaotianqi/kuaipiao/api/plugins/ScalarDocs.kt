@@ -9,11 +9,15 @@ import io.github.smiley4.schemakenerator.swagger.SwaggerSteps.RequiredHandling
 import io.github.smiley4.schemakenerator.swagger.data.TitleType
 import io.github.smiley4.ktoropenapi.openApi
 import io.github.smiley4.ktorswaggerui.swaggerUI
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
 import org.xiaotianqi.kuaipiao.config.ApiConfig
+import java.io.File
 
 fun main() {
     embeddedServer(CIO, port = 8080, host = "localhost", module = Application::configureOpenAPI)
@@ -104,12 +108,43 @@ fun Application.configureOpenAPI() {
     }
 
     routing {
-        route("api.json") {
-            openApi()
+        get("/openapi.json") {
+            val specFile = File("build/open-api.json")
+            if (specFile.exists()) {
+                call.respondText(
+                    text = specFile.readText(),
+                    contentType = ContentType.Application.Json
+                )
+            } else {
+                call.respond(HttpStatusCode.NotFound, "OpenAPI spec not found")
+            }
         }
 
         route("api.yaml") {
             openApi()
+        }
+
+        get("/docs") {
+            call.respondText(
+                contentType = ContentType.Text.Html
+            ) {
+                """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>KuaiPiao API Docs</title>
+                <meta charset="utf-8"/>
+            </head>
+            <body>
+                <script 
+                    id="api-reference" 
+                    data-url="/openapi.json"
+                ></script>
+                <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+            </body>
+            </html>
+            """.trimIndent()
+            }
         }
 
         route("swagger") {

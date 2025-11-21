@@ -35,6 +35,17 @@ fun Route.loginRoute() {
     val passwordEncoder by inject<PasswordEncoder>()
     val jwtService by inject<JwtService>()
 
+    /**
+     * User login endpoint
+     *
+     * Authenticates a user with email and password credentials.
+     *
+     * @request [LoginCredentials] User email and password
+     * @response 200 [UserResponse] Login successful, returns user data
+     * @response 401 Invalid credentials
+     * @response 405 Email not verified
+     */
+
     post<LoginRoute> {
         val loginData = call.receive<LoginCredentials>()
         val user = userDao.getFromEmail(loginData.email)
@@ -47,9 +58,7 @@ fun Route.loginRoute() {
         if (!user.emailVerified) {
             return@post call.respond(HttpStatusCode.MethodNotAllowed, "Email not verified")
         }
-        val token = jwtService.generateToken(
-            userId = user.id,
-        )
+        val token = jwtService.generateToken(userId = user.id)
 
         val userSessionId = userSessionDao.create(
             userId = DtId(UUID.fromString(user.id)),
@@ -74,7 +83,6 @@ fun Route.loginRoute() {
         )
 
         call.sessions.set(session)
-
         call.respond(HttpStatusCode.OK, user.toResponse())
     }
 }

@@ -1,3 +1,7 @@
+@file:OptIn(OpenApiPreview::class)
+
+import io.ktor.plugin.OpenApiPreview
+
 plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.kotlinPluginSerialization)
@@ -18,6 +22,21 @@ application {
         "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
         "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
     )
+}
+
+ktor {
+    @OptIn(OpenApiPreview::class)
+    openApi {
+        title = "KuaiPiao OpenApi"
+        version = "1.0.0"
+        summary = "This is a Kuaipiao API by Xiaotianqi"
+        description = "This is a longer description"
+        termsOfService = "https://xiaotianqi.com/kuaipiao/terms/"
+        contact = "contact@xiaotianqi.com"
+        license = "Apache/1.0"
+
+        target = project.layout.buildDirectory.file("open-api.json")
+    }
 }
 
 dependencies {
