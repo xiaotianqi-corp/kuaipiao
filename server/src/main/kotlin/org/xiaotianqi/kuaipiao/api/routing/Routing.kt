@@ -17,9 +17,5 @@ fun Application.configureRouting() {
 
     routing {
         configureV1Routes()
-        route("/legacy") {
-            authRoutesV1()
-            organizationRoutesV1()
-        }
     }
 }

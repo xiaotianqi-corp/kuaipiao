@@ -45,12 +45,12 @@ fun Application.configureOpenAPI() {
         }
 
         externalDocs {
-            url = "https://docs.xiaotianqi.com/kuaipiao"
+            url = "https://developer.xiaotianqi.com/kuaipiao"
             description = "Documentación completa del proyecto"
         }
 
         server {
-            url = "http://localhost:${ApiConfig.port}"
+            url = "http://developer.localhost:${ApiConfig.port}"
             description = "Servidor de desarrollo local"
         }
         server {
