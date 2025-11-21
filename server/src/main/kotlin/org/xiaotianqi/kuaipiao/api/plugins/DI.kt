@@ -16,30 +16,37 @@ import org.koin.ktor.plugin.KoinApplicationStopped
 import org.koin.logger.slf4jLogger
 import org.koin.core.logger.Level
 import org.koin.ktor.ext.getKoin
+import org.xiaotianqi.kuaipiao.config.ApiConfig
+import org.xiaotianqi.kuaipiao.core.security.JwtModule
+import org.xiaotianqi.kuaipiao.di.AuthModule
+import org.xiaotianqi.kuaipiao.di.SecurityModule
 
 private val logger = KotlinLogging.logger { }
 
-/**
- * Configures dependency injection and graceful shutdown for multiplatform Ktor
- */
 fun Application.configureDI() {
     install(Koin) {
         slf4jLogger(Level.valueOf(ApplicationConfig.logLevel.levelStr))
 
-        // Definimos los módulos manualmente
         modules(
             module {
-                // LogicModule bindings
+                single { ApiConfig }
+            },
+            module {
                 single { LogicModule() }
             },
             module {
-                // ClientModule bindings
                 single { ClientModule() }
             },
             module {
-                // DataModule bindings
                 single { DataModule() }
-            }
+            },
+            module {
+                single { AuthModule() }
+            },
+            module {
+                single { JwtModule() }
+            },
+            SecurityModule
         )
 
         this.createEagerInstances()

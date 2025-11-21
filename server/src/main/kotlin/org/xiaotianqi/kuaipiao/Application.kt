@@ -2,13 +2,13 @@ package org.xiaotianqi.kuaipiao
 
 import ch.qos.logback.classic.Logger
 import io.ktor.server.application.*
+import io.ktor.server.cio.CIO
 import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import org.slf4j.LoggerFactory
+import org.xiaotianqi.kuaipiao.api.plugins.AuthorizationPlugin
 import org.xiaotianqi.kuaipiao.api.plugins.configureDI
 import org.xiaotianqi.kuaipiao.api.plugins.configureHTTP
+import org.xiaotianqi.kuaipiao.api.plugins.configureOpenAPI
 import org.xiaotianqi.kuaipiao.api.plugins.configureSecurity
 import org.xiaotianqi.kuaipiao.api.plugins.configureSerialization
 import org.xiaotianqi.kuaipiao.api.plugins.configureStatusPages
@@ -18,15 +18,18 @@ import org.xiaotianqi.kuaipiao.config.ApiConfig
 import org.xiaotianqi.kuaipiao.config.ApplicationConfig
 import org.xiaotianqi.kuaipiao.config.core.ConfigurationManager
 import org.xiaotianqi.kuaipiao.config.core.ConfigurationReader
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 fun main() {
     println("""
-         _____     ______        ______   ______     ______    
-        /\  __-.  /\  __ \      /\__  _\ /\  __ \   /\  __ \   
-        \ \ \/\ \ \ \ \/\ \     \/_/\ \/ \ \ \/\ \  \ \ \/\ \  
-         \ \____-  \ \_____\       \ \_\  \ \_____\  \ \_____\ 
-          \/____/   \/_____/        \/_/   \/_____/   \/_____/ 
-                                                       
+     __  ___  __    __       ___       __  .______    __       ___       ______   
+    |  |/  / |  |  |  |     /   \     |  | |   _  \  |  |     /   \     /  __  \  
+    |  '  /  |  |  |  |    /  ^  \    |  | |  |_)  | |  |    /  ^  \   |  |  |  | 
+    |    <   |  |  |  |   /  /_\  \   |  | |   ___/  |  |   /  /_\  \  |  |  |  | 
+    |  .  \  |  `--'  |  /  _____  \  |  | |  |      |  |  /  _____  \ |  `--'  | 
+    |__|\__\  \______/  /__/     \__\ |__| | _|      |__| /__/     \__\ \______/  
+                                                                                  
     """.trimIndent())
 
     val configInitializer = ConfigurationManager(
@@ -44,15 +47,20 @@ fun main() {
     /**
      * Start api server
      */
-    embeddedServer(Netty, port = ApiConfig.port, host = "0.0.0.0", module = Application::module)
+    embeddedServer(CIO, port = ApiConfig.port, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
-fun Application.module() {
+@ExperimentalTime
+fun Application.module(testing: Boolean = false) {
+    install(AuthorizationPlugin)
+    configureOpenAPI()
     configureDI()
     configureSerialization()
     configureHTTP()
-    configureSecurity()
+    if (!testing) {
+        configureSecurity()
+    }
     configureStatusPages()
     configureValidator()
     configureRouting()

@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {Greeting} from './components/Greeting/Greeting.tsx';
+import App from '@/pages/app';
+import './styles/globals.css';
+import {AppProviders} from "@components/common/app-providers";
 
-const rootElement = document.getElementById('root');
-if (!rootElement) throw new Error('Failed to find the root element');
+const root = document.getElementById('root');
+if (!root) throw new Error('Root element not found');
 
-ReactDOM.createRoot(rootElement).render(
+ReactDOM.createRoot(root).render(
     <React.StrictMode>
-        <Greeting/>
+        <AppProviders>
+            <App />
+        </AppProviders>
     </React.StrictMode>
 );

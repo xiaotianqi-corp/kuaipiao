@@ -1,0 +1,119 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Kuaipiao API",
+    "description": "Kuaipiao API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:8080",
+      "description": "Servidor de desarrollo"
+    }
+  ],
+  "paths": {
+    "/api/login": {
+      "post": {
+        "summary": "Inicia sesión",
+        "description": "Recibe las credenciales del usuario y devuelve un token JWT.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciales inválidas."
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Obtiene usuario",
+        "description": "Devuelve la información de un usuario según su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Identificador único del usuario."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta exitosa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@kuaipiao.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "mock-token"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1234"
+          },
+          "name": {
+            "type": "string",
+            "example": "Allan"
+          }
+        }
+      }
+    }
+  }
+}

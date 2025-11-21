@@ -1,91 +1,107 @@
 package org.xiaotianqi.kuaipiao.api.plugins
 
-import org.xiaotianqi.kuaipiao.config.ApiConfig
-import org.xiaotianqi.kuaipiao.core.exceptions.AuthenticationException
-import org.xiaotianqi.kuaipiao.core.logic.PasswordEncoder
-import org.xiaotianqi.kuaipiao.core.logic.typedId.impl.DtId
-import org.xiaotianqi.kuaipiao.core.logic.typedId.serialization.IdKotlinXSerializationModule
-import org.xiaotianqi.kuaipiao.data.daos.auth.UserSessionDao
-import org.xiaotianqi.kuaipiao.data.daos.user.UserDao
-import org.xiaotianqi.kuaipiao.domain.auth.UserData
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.response.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.sessions.*
-import io.ktor.server.sessions.serialization.*
-import io.ktor.util.pipeline.*
+import io.ktor.http.*
+import io.ktor.server.response.*
+import io.ktor.server.sessions.serialization.KotlinxSessionSerializer
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
-import org.xiaotianqi.kuaipiao.domain.auth.UserAuthSessionData
+import org.xiaotianqi.kuaipiao.api.security.JwtService
+import org.xiaotianqi.kuaipiao.config.ApiConfig
+import org.xiaotianqi.kuaipiao.data.daos.auth.UserSessionDao
+import org.xiaotianqi.kuaipiao.data.daos.user.UserDao
 import org.xiaotianqi.kuaipiao.domain.auth.UserSessionCookie
 import org.xiaotianqi.kuaipiao.utils.DateTimeUtils
+import org.xiaotianqi.kuaipiao.core.logic.PasswordEncoder
+import org.xiaotianqi.kuaipiao.core.logic.typedId.impl.DtId
+import org.xiaotianqi.kuaipiao.domain.auth.UserAuthSessionData
+import org.xiaotianqi.kuaipiao.domain.auth.UserData
+import org.xiaotianqi.kuaipiao.core.logic.typedId.serialization.IdKotlinXSerializationModule
+import io.ktor.util.pipeline.*
+import org.xiaotianqi.kuaipiao.core.exceptions.AuthenticationException
+import kotlin.time.ExperimentalTime
 
-/**
- * Available authentication methods for api routes
- */
 object AuthenticationMethods {
     const val EMAIL_VERIFICATION_FORM_AUTH = "email_verification_form_auth"
     const val USER_SESSION_AUTH = "user_session_auth"
 }
 
-/**
- * Used to store the Id in the email verification routes (that cannot use proper session authentication)
- */
+@ExperimentalTime
 data class UserIdPrincipalForEmailVerificationAuth(val id: DtId<UserData>)
 
+@ExperimentalTime
 fun Application.configureSecurity() {
     val userDao by inject<UserDao>()
     val userSessionDao by inject<UserSessionDao>()
     val passwordEncoder by inject<PasswordEncoder>()
+    val jwtService by inject<JwtService>()
 
     install(Sessions) {
         cookie<UserSessionCookie>("user_session_id") {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = ApiConfig.sessionMaxAgeInSeconds
             cookie.secure = ApiConfig.cookieSecure
             cookie.httpOnly = true
+            cookie.maxAgeInSeconds = ApiConfig.sessionMaxAgeInSeconds
             cookie.extensions["SameSite"] = "None"
-
-            serializer =
-                KotlinxSessionSerializer(
-                    Json {
-                        serializersModule = IdKotlinXSerializationModule
-                    },
-                )
+            serializer = KotlinxSessionSerializer(
+                Json {
+                    serializersModule = IdKotlinXSerializationModule
+                }
+            )
         }
     }
 
     install(Authentication) {
-        // Used only for email verification operation
+
+        /** SUPER ADMIN JWT **/
+        jwt("admin-realm") {
+            realm = "kuaipiao"
+            verifier(jwtService.verifier())
+            authHeader {
+                it.request.parseAuthorizationHeader()
+            }
+
+            validate { credential ->
+                val roles = credential.payload.getClaim("roles").asList(String::class.java)
+
+                if (roles?.contains("SUPER_ADMIN") == true)
+                    JWTPrincipal(credential.payload)
+                else null
+            }
+
+        }
+
+        /** FORM LOGIN **/
         form(AuthenticationMethods.EMAIL_VERIFICATION_FORM_AUTH) {
             userParamName = "email"
             passwordParamName = "password"
+
             validate { credentials ->
                 userDao.getFromEmail(credentials.name)?.let {
-                    if (passwordEncoder.matches(credentials.password, it.passwordHash)) {
+                    if (passwordEncoder.matches(credentials.password, it.passwordHash))
                         UserIdPrincipalForEmailVerificationAuth(DtId(it.id))
-                    } else {
-                        null
-                    }
+                    else null
                 }
             }
+
             challenge {
                 call.respond(HttpStatusCode.Unauthorized)
             }
         }
 
+        /** SESSION LOGIN **/
         session<UserSessionCookie>(AuthenticationMethods.USER_SESSION_AUTH) {
-            validate { userSessionCookie ->
-                val session = userSessionDao.get(userSessionCookie.userId, userSessionCookie.sessionId)
+            validate { cookie ->
+                val session = userSessionDao.get(cookie.userId, cookie.sessionId)
 
-                // If there is no session or if it has expired
-                if (session == null || (DateTimeUtils.currentMillis() - session.iat) >= (ApiConfig.sessionMaxAgeInSeconds * 1000)) {
+                if (session == null || DateTimeUtils.isExpired(session.iat))
                     null
-                } else {
-                    session
-                }
+                else session
             }
+
             challenge {
                 call.respond(HttpStatusCode.Unauthorized)
             }
@@ -93,28 +109,14 @@ fun Application.configureSecurity() {
     }
 }
 
-/**
- * Gets the current [UserAuthSessionData]
- */
+
 fun PipelineContext<Unit, ApplicationCall>.authSessionData(): UserAuthSessionData? = call.principal<UserAuthSessionData>()
 
-/**
- * Gets the current [UserAuthSessionData]
- *
- * @throws AuthenticationException if not authenticated
- */
 fun PipelineContext<Unit, ApplicationCall>.authSessionDataOrThrow(): UserAuthSessionData = authSessionData() ?: throw AuthenticationException()
 
-
-/**
- * Gets the [DtId] of the session authenticated [UserData]
- */
+@ExperimentalTime
 fun PipelineContext<Unit, ApplicationCall>.userIdFromSession(): DtId<UserData>? =
     call.principal<UserAuthSessionData>()?.userId?.let { DtId<UserData>(it) }
 
-/**
- * Gets the [DtId] of the session authenticated [UserData]
- *
- * @throws AuthenticationException if not authenticated
- */
+@ExperimentalTime
 fun PipelineContext<Unit, ApplicationCall>.userIdFromSessionOrThrow(): DtId<UserData> = userIdFromSession() ?: throw AuthenticationException()

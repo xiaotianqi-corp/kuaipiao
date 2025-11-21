@@ -1,0 +1,55 @@
+{
+  "references": [
+    {
+      "name": "Kuaipiao API Reference",
+      "path": "./server/src/main/resources/api.yaml"
+    }
+  ],
+  "guides": [
+    {
+      "name": "Kuaipiao Guides",
+      "sidebar": [
+        {
+          "name": "Introducción",
+          "type": "folder",
+          "icon": "rocket",
+          "children": [
+            { "path": "docs/guides/quick-start/introduction.md", "type": "page", "name": "Visión General" },
+            { "path": "docs/guides/quick-start/installation.md", "type": "page", "name": "Instalación y Configuración" },
+            { "path": "docs/guides/quick-start/development.md", "type": "page", "name": "Entorno de Desarrollo" }
+          ]
+        },
+        {
+          "name": "Configuración del Proyecto",
+          "type": "folder",
+          "icon": "gear",
+          "children": [
+            { "path": "docs/guides/config/project-settings.md", "type": "page", "name": "Parámetros del Proyecto" },
+            { "path": "docs/guides/config/api-client.md", "type": "page", "name": "Cliente API (SDK)" }
+          ]
+        },
+        {
+          "name": "Recursos Avanzados",
+          "type": "folder",
+          "icon": "notebook",
+          "defaultOpen": false,
+          "children": [
+            { "path": "docs/guides/advanced/scalar-cli.md", "type": "page", "name": "Uso de Scalar CLI" },
+            { "path": "docs/guides/advanced/syntax.md", "type": "page", "name": "Sintaxis Avanzada" }
+          ]
+        }
+      ]
+    }
+  ],
+  "siteConfig": {
+    "title": "Xiaotianqi — Kuaipiao API Docs",
+    "theme": "purple",
+    "logo": {
+      "darkMode": "https://xiaotianqi.dev/assets/logo-light.svg",
+      "lightMode": "https://xiaotianqi.dev/assets/logo-dark.svg"
+    },
+    "footer": {
+      "text": "© 2025 Xiaotianqi. Todos los derechos reservados."
+    }
+  }
+}

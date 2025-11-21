@@ -4,5 +4,5 @@ import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 
 @Module(includes = [LogicModule::class])
-@ComponentScan("app.dotoo.core.clients")
+@ComponentScan("org.xiaotianqi.kuaipiao.core.clients")
 class ClientModule

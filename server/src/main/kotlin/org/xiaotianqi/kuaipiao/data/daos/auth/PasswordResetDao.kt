@@ -3,8 +3,10 @@ package org.xiaotianqi.kuaipiao.data.daos.auth
 import org.xiaotianqi.kuaipiao.domain.password.PasswordResetData
 import org.xiaotianqi.kuaipiao.data.sources.db.dbi.user.PasswordResetDBI
 import org.koin.core.annotation.Single
+import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
+@ExperimentalTime
 class PasswordResetDao(
     private val passwordResetDBI: PasswordResetDBI
 ) {

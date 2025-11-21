@@ -5,13 +5,14 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.test.*
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class ApplicationTest {
-
     @Test
     fun testRoot() = testApplication {
         application {
-            module()
+            module(testing = true)
         }
         val response = client.get("/")
         assertEquals(HttpStatusCode.OK, response.status)

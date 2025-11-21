@@ -11,15 +11,37 @@ import org.xiaotianqi.kuaipiao.data.sources.db.dbi.user.UserDBI
 import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UserEntity
 import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UsersTable
 import org.xiaotianqi.kuaipiao.data.mappers.fromCreateData
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.enterprise.EnterpriseEntity
 import org.xiaotianqi.kuaipiao.data.sources.db.toEntityId
+import org.xiaotianqi.kuaipiao.domain.enterprise.EnterpriseCreateData
+import org.xiaotianqi.kuaipiao.enums.EnterprisePlan
+import org.xiaotianqi.kuaipiao.enums.EntityStatus
 import java.util.UUID
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
+@ExperimentalTime
 class UserDBIImpl : UserDBI {
     override suspend fun create(userData: UserCreateData) {
         dbQuery {
+            val enterpriseEntity = EnterpriseEntity.new(UUID.randomUUID()) {
+                fromCreateData(
+                    EnterpriseCreateData(
+                        id = UUID.randomUUID().toString(),
+                        subdomain = userData.email.substringBefore("@"),
+                        domain = null,
+                        status = EntityStatus.ACTIVE,
+                        plan = EnterprisePlan.FREE,
+                        settings = "",
+                        metadata = "",
+                        createdAt = Clock.System.now()
+                    )
+                )
+            }
+
             UserEntity.new(UUID.fromString(userData.id)) {
-                fromCreateData(userData)
+                fromCreateData(userData, enterpriseEntity)
             }
         }
     }
@@ -37,10 +59,24 @@ class UserDBIImpl : UserDBI {
                 .firstOrNull()
         }
 
+    override suspend fun getAll(page: Int, limit: Int): List<UserEntity> = dbQuery {
+        UserEntity.all()
+            .limit(limit).offset(start = (page * limit).toLong())
+            .toList()
+    }
+
+    override suspend fun updateStatus(id: DtId<UserData>, isActive: Boolean) {
+        dbQuery {
+            UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
+                it[UsersTable.isActive] = isActive
+            }
+        }
+    }
+
     override suspend fun verifyEmail(id: DtId<UserData>) {
         dbQuery {
             UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
-                it[email_verified] = true
+                it[emailVerified] = true
             }
         }
     }
@@ -48,7 +84,7 @@ class UserDBIImpl : UserDBI {
     override suspend fun changePassword(id: DtId<UserData>, newPasswordHashed: String) {
         dbQuery {
             UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
-                it[password_hash] = newPasswordHashed
+                it[passwordHash] = newPasswordHashed
             }
         }
     }
@@ -61,9 +97,9 @@ class UserDBIImpl : UserDBI {
         dbQuery {
             UsersTable.update({ UsersTable.id eq id.toEntityId(UsersTable) }) {
                 if (verifyEmail) {
-                    it[email_verified] = true
+                    it[emailVerified] = true
                 }
-                it[password_hash] = newPasswordHashed
+                it[passwordHash] = newPasswordHashed
             }
         }
     }

@@ -8,7 +8,8 @@ fun UserAuthSessionData.toDomain() = UserAuthSessionData(
     userId = this.userId.toString(),
     iat = this.iat,
     deviceName = this.deviceName,
-    ip = this.ip
+    ip = this.ip,
+    token = this.token,
 )
 
 fun UserSessionCookie.toDomain() = UserSessionCookie(

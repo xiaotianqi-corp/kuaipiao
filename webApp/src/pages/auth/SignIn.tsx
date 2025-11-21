@@ -1,0 +1,194 @@
+import { useNavigate } from 'react-router-dom';
+import InputError from '@/components/common/input-error';
+import TextLink from '@/components/common/text-link';
+import { Button } from '@/components/ui/button';
+import { ContainerEffect } from "@components/ui/container-effect.tsx";
+import { LabelEffect } from "@components/ui/label-effect.tsx";
+import { InputEffect } from "@components/ui/input-effect.tsx";
+import { BottomEffect } from "@components/ui/bottom-effect.tsx";
+import SignInLayout from "@/layouts/SignInLayout.tsx";
+import { useState } from "react";
+import { Mail, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import {useDynamicDialog} from "@components/shared/dinamicIsland/DynamicToast.tsx";
+
+interface SignInProps {
+    status?: string;
+}
+
+export default function SignIn({ status }: SignInProps) {
+    const navigate = useNavigate();
+    const { showDialog, closeDialog, DialogComponent } = useDynamicDialog();
+    const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
+
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const handleEmailSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!email) {
+            showDialog({
+                title: 'Email Required',
+                description: 'Please enter your email address to continue.',
+                icon: <AlertCircle className="w-5 h-5 text-destructive" />,
+                actions: [
+                    {
+                        label: 'OK',
+                        icon: <CheckCircle2 className="w-4 h-4" />,
+                        onClick: () => closeDialog(),
+                        shouldClose: true,
+                    }
+                ],
+                position: 'top-center',
+            });
+            setError('Email is required');
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            showDialog({
+                title: 'Invalid Email',
+                description: 'Please enter a valid email address (e.g., user@example.com).',
+                icon: <AlertCircle className="w-5 h-5 text-destructive" />,
+                actions: [
+                    {
+                        label: 'OK',
+                        icon: <CheckCircle2 className="w-4 w-4" />,
+                        onClick: () => closeDialog(),
+                        shouldClose: true,
+                    }
+                ],
+                position: 'top-center',
+            });
+            setError('Please enter a valid email address');
+            return;
+        }
+
+        showDialog({
+            title: 'Email Verified',
+            description: `Proceeding with ${email}`,
+            icon: <Mail className="w-5 h-5 text-blue-600" />,
+            autoClose: 1500, // ⏱ tiempo visible antes de cerrar (1.5s)
+            onClose: () => {
+                navigate('/sign-in/factor-one', { state: { email } });
+            },
+            position: 'top-center',
+        });
+    };
+
+    const handleOAuthLogin = (provider: string) => {
+        showDialog({
+            title: `Sign in with ${provider}`,
+            description: 'This feature is coming soon. Use email/password for now.',
+            icon: <AlertCircle className="w-5 h-5 text-amber-600" />,
+            actions: [
+                {
+                    label: 'OK',
+                    icon: <X className="w-4 h-4" />,
+                    onClick: () => closeDialog(),
+                    shouldClose: true,
+                }
+            ],
+            position: 'top-center',
+        });
+    };
+
+    return (
+        <>
+            <DialogComponent />
+
+            <SignInLayout title="Sign in to Kuaipiao" description="Welcome back! Please sign in to continue">
+                <form onSubmit={handleEmailSubmit} className="space-y-4" noValidate>
+                    <ContainerEffect>
+                        <LabelEffect htmlFor="email">Email address</LabelEffect>
+                        <InputEffect
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="email"
+                            placeholder="email@example.com"
+                        />
+                        <InputError message={error} className='hidden' />
+                    </ContainerEffect>
+
+                    <Button
+                        type="submit"
+                        className="w-full"
+                        tabIndex={2}
+                    >
+                        Continue
+                    </Button>
+
+                    <div className="text-center text-sm text-muted-foreground">
+                        <TextLink to="/sign-up" tabIndex={3}>
+                            Use passkey instead
+                        </TextLink>
+                    </div>
+
+                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                        <span className="bg-card text-muted-foreground relative z-10 px-2">
+                            Or continue with
+                        </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4">
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => handleOAuthLogin('Apple')}
+                            className="group/btn shadow-input relative flex w-full rounded-md bg-gray-50 font-medium text-black dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path
+                                    d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                            <span className="sr-only">SignIn with Apple</span>
+                            <BottomEffect />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => handleOAuthLogin('Google')}
+                            className="group/btn shadow-input relative flex w-full rounded-md bg-gray-50 font-medium text-black dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path
+                                    d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                            <span className="sr-only">SignIn with Google</span>
+                            <BottomEffect />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => handleOAuthLogin('Meta')}
+                            className="group/btn shadow-input relative flex w-full rounded-md bg-gray-50 font-medium text-black dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path
+                                    d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.633-.671 3.965-2.444.76-1.012 1.144-1.626 2.663-4.32l.756-1.339.186-.325c.061.1.121.196.183.3l2.152 3.595c.724 1.21 1.665 2.556 2.47 3.314 1.046.987 1.992 1.22 3.06 1.22 1.075 0 1.876-.355 2.455-.843a3.743 3.743 0 0 0 .81-.973c.542-.939.861-2.127.861-3.745 0-2.72-.681-5.357-2.084-7.45-1.282-1.912-2.957-2.93-4.716-2.93-1.047 0-2.088.467-3.053 1.308-.652.57-1.257 1.29-1.82 2.05-.69-.875-1.335-1.547-1.958-2.056-1.182-.966-2.315-1.303-3.454-1.303zm10.16 2.053c1.147 0 2.188.758 2.992 1.999 1.132 1.748 1.647 4.195 1.647 6.4 0 1.548-.368 2.9-1.839 2.9-.58 0-1.027-.23-1.664-1.004-.496-.601-1.343-1.878-2.832-4.358l-.617-1.028a44.908 44.908 0 0 0-1.255-1.98c.07-.109.141-.224.211-.327 1.12-1.667 2.118-2.602 3.358-2.602zm-10.201.553c1.265 0 2.058.791 2.675 1.446.307.327.737.871 1.234 1.579l-1.02 1.566c-.757 1.163-1.882 3.017-2.837 4.338-1.191 1.649-1.81 1.817-2.486 1.817-.524 0-1.038-.237-1.383-.794-.263-.426-.464-1.13-.464-2.046 0-2.221.63-4.535 1.66-6.088.454-.687.964-1.226 1.533-1.533a2.264 2.264 0 0 1 1.088-.285z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                            <span className="sr-only">SignIn with Meta</span>
+                            <BottomEffect />
+                        </Button>
+                    </div>
+                </form>
+
+                {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+            </SignInLayout>
+        </>
+    );
+}

@@ -6,16 +6,16 @@ android-minSdk = "24"
 android-targetSdk = "36"
 
 # AndroidX Components
-androidx-activity = "1.11.0"
+androidx-activity = "1.12.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
-androidx-lifecycle = "2.9.5"
+androidx-lifecycle = "2.9.6"
 androidx-testExt = "1.3.0"
 
 # Compose and UI
-composeMultiplatform = "1.9.2"
-composeHotReload = "1.0.0-rc02"
+composeMultiplatform = "1.9.3"
+composeHotReload = "1.0.0-rc04"
 
 # Testing
 junit = "4.13.2"
@@ -24,13 +24,14 @@ testcontainers = "1.21.3"
 
 # Core Technologies
 kotlin = "2.2.21"
-ktor = "3.3.1"
-logback = "1.5.20"
+ktor = "3.3.2"
+logback = "1.5.21"
 koin = "4.1.1"
-koog = "0.5.2"
+koin-annotations = "2.3.1"
 slf4j = "2.0.17"
-koin-ksp = "2.3.0"
+koin-ksp = "2.3.1"
 classgraph = "4.8.184"
+poi = "5.5.0"
 
 # Kotlin Extensions
 kotlinx-serialization = "1.9.0"
@@ -38,10 +39,11 @@ kotlinx-datetime = "0.7.1-0.6.x-compat"
 kotlinx-coroutines = "1.10.2"
 
 # Messaging and communication
-amqp-client = "5.27.0"
+amqp-client = "5.27.1"
 
 # Swagger for API documentation
-ktor-swagger = "5.3.0"
+ktor-swagger = "5.4.0"
+ktor-kenerator = "2.5.0"
 
 # API and GraphQL
 graphql-kotlin = "8.8.1"
@@ -58,7 +60,7 @@ bcrypt = "0.4"
 hikari = "7.0.2"
 postgres = "42.7.8"
 exposed = "0.61.0"
-flyway = "11.15.0"
+flyway = "11.17.0"
 h2 = "2.4.240"
 kafka = "2.2.1"
 
@@ -71,7 +73,7 @@ redis = "6.8.1.RELEASE"
 
 # Monitoring and Metrics
 prometheusClient = "0.16.0"
-prometheus = "1.15.5"
+prometheus = "1.16.0"
 khealth = "3.0.2"
 kotlinLogging = "7.0.13"
 
@@ -83,15 +85,18 @@ xml = "0.91.3"
 xades4j = "1.82"
 jaxb-api = "2.3.1"
 santuario = "4.0.4"
-encoder = "1.3.1"
+encoder = "1.4.0"
 
 # Google Cloud y Firebase
-google-cloud-bom = "26.71.0"
+google-cloud-bom = "26.72.0"
 google-api-client = "2.8.1"
 firebase-admin = "9.3.0"
 
+# Ai
+koog = "0.5.3"
+
 # ENV
-dotenv = "6.4.1"
+dotenv = "6.5.1"
 
 [libraries]
 # --- Core Kotlin Libraries ---
@@ -102,10 +107,12 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlin-poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 
 # --- Dependency Injection / Logging ---
 koog-ktor = { module = "ai.koog:koog-ktor", version.ref = "koog" }
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+koin-ktor-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotations" }
 koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
 koin-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-ksp" }
 ktor-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph"}
@@ -143,9 +150,12 @@ ktor-server-http-redirect = { module = "io.ktor:ktor-server-http-redirect", vers
 ktor-server-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version.ref = "kafka" }
 ktor-server-metrics = { module = "io.ktor:ktor-server-metrics", version.ref = "ktor" }
 ktor-server-metrics-jvm = { module = "io.ktor:ktor-server-metrics-jvm", version.ref = "ktor" }
+ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
+ktor-server-open-generator = { module = "io.github.smiley4:ktor-openapi", version.ref = "ktor-swagger" }
+ktor-server-schema-kenerator = { module = "io.github.smiley4:schema-kenerator-core", version.ref = "ktor-kenerator"}
+ktor-server-schema-swagger = { module = "io.github.smiley4:schema-kenerator-swagger", version.ref = "ktor-kenerator"}
 ktor-serverMetricsMicrometer = { module = "io.ktor:ktor-server-metrics-micrometer", version.ref = "ktor" }
 ktor-serverMetricsPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
-ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 ktor-server-partial-content = { module = "io.ktor:ktor-server-partial-content-jvm", version.ref = "ktor" }
 ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validation", version.ref = "ktor" }
 ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
@@ -173,6 +183,7 @@ exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exp
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-database = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 
 # --- Messaging and communication ---
@@ -230,6 +241,9 @@ jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-api" }
 santuario = { module = "org.apache.santuario:xmlsec", version.ref = "santuario" }
 encoder = { module = "org.owasp.encoder:encoder", version.ref = "encoder" }
 
+# --- Ai Agents---
+ai-koog = { module = "ai.koog:koog-agents", version.ref = "koog"}
+
 # --- Testing Libraries ---
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -276,7 +290,6 @@ di = [
 ktor-client = [
     "ktor-client-core",
     "ktor-client-apache",
-    "ktor-client-cio",
     "ktor-clientLogging",
     "ktor-serialization-kotlinx-json",
     "ktor-network-tls",
@@ -288,7 +301,6 @@ ktor-client = [
 # --------------------------------------------
 ktor-server = [
     "ktor-server-core",
-    "ktor-server-netty",
     "ktor-server-auth",
     "ktor-server-auth-jwt",
     "ktor-server-sessions",
@@ -316,6 +328,7 @@ ktor-server = [
     "ktor-server-websockets",
     "ktor-server-config-yaml",
     "ktor-server-di",
+    "kotlin-poi",
     "ktor-server-resources"
 ]
 
@@ -336,7 +349,11 @@ androidx = [
 # API Documentation / OpenAPI
 # --------------------------------------------
 swagger = [
-    "ktor-swagger"
+    "ktor-swagger",
+    "ktor-server-openapi",
+    "ktor-server-open-generator",
+    "ktor-server-schema-kenerator",
+    "ktor-server-schema-swagger"
 ]
 
 # --------------------------------------------
@@ -365,6 +382,7 @@ database = [
     "exposed-jdbc",
     "exposed-java-time",
     "flyway-core",
+    "flyway-database",
     "h2"
 ]
 
@@ -434,6 +452,13 @@ google = [
     "google-cloud-bom",
     "google-api-client",
     "firebase-admin"
+]
+
+# --------------------------------------------
+# Ai Agents
+# --------------------------------------------
+ai = [
+    "ai-koog"
 ]
 
 # --------------------------------------------

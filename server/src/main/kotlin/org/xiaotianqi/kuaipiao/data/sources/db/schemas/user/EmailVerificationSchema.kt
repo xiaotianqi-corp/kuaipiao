@@ -18,6 +18,7 @@ import org.xiaotianqi.kuaipiao.domain.auth.UserData
 import org.xiaotianqi.kuaipiao.domain.email.EmailVerificationData
 import java.time.Instant
 import java.util.UUID
+import kotlin.time.ExperimentalTime
 
 /**
  * @property id
@@ -56,6 +57,7 @@ class EmailVerificationEntity(id: EntityID<Int>) : IntEntity(id) {
     var userEntity by UserEntity referencedOn EmailVerificationTable.user
 }
 
+@ExperimentalTime
 fun EmailVerificationEntity.fromData(emailVerificationData: EmailVerificationData) {
     token = emailVerificationData.token
     user = DtId<UserData>(UUID.fromString(emailVerificationData.userId)).toEntityId(UsersTable)
@@ -63,6 +65,7 @@ fun EmailVerificationEntity.fromData(emailVerificationData: EmailVerificationDat
     expires_at = Instant.ofEpochMilli(emailVerificationData.expireAt)
 }
 
+@ExperimentalTime
 fun EmailVerificationEntity.toData() =
     EmailVerificationData(
         token = token,

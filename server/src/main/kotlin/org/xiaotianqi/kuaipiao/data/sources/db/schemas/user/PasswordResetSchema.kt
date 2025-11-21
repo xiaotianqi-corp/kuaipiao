@@ -18,6 +18,7 @@ import org.xiaotianqi.kuaipiao.domain.auth.UserData
 import org.xiaotianqi.kuaipiao.domain.password.PasswordResetData
 import java.time.Instant
 import java.util.UUID
+import kotlin.time.ExperimentalTime
 
 /**
  * @property id
@@ -57,6 +58,7 @@ class PasswordResetEntity(id: EntityID<Int>) : IntEntity(id) {
     val userEntity by UserEntity referencedOn PasswordResetTable.user
 }
 
+@ExperimentalTime
 fun PasswordResetEntity.fromData(passwordResetData: PasswordResetData) {
     val userIdUuid = UUID.fromString(passwordResetData.userId)
 
@@ -66,6 +68,7 @@ fun PasswordResetEntity.fromData(passwordResetData: PasswordResetData) {
     expires_at = Instant.ofEpochMilli(passwordResetData.expireAt)
 }
 
+@ExperimentalTime
 fun PasswordResetEntity.toData() =
     PasswordResetData(
         token = token,

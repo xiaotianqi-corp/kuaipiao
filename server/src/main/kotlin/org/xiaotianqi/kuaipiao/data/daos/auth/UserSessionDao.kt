@@ -8,8 +8,10 @@ import org.xiaotianqi.kuaipiao.data.sources.cache.cm.users.UserSessionCM
 import org.koin.core.annotation.Single
 import org.xiaotianqi.kuaipiao.domain.auth.UserAuthSessionData
 import org.xiaotianqi.kuaipiao.domain.auth.UserSessionCookie
+import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
+@ExperimentalTime
 class UserSessionDao(
     private val userSessionCM: UserSessionCM,
 ) {
@@ -22,6 +24,7 @@ class UserSessionDao(
         userId: DtId<UserData>,
         device: String?,
         ip: String,
+        token: String,
     ): UserSessionCookie {
         val userSessionCookie = UserSessionCookie(
             newDtId<UserAuthSessionData>().toString(),
@@ -35,6 +38,7 @@ class UserSessionDao(
                 iat = DatetimeUtils.currentMillis(),
                 deviceName = device,
                 ip = ip,
+                token = token,
             ),
         )
 

@@ -8,7 +8,9 @@ import org.xiaotianqi.kuaipiao.domain.auth.UserData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.xiaotianqi.kuaipiao.domain.password.PasswordResetData
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 object PasswordResetUseCase : KoinComponent {
     private val passwordResetDao by inject<PasswordResetDao>()
     private val tokenGenerator by inject<TokenGenerator>()

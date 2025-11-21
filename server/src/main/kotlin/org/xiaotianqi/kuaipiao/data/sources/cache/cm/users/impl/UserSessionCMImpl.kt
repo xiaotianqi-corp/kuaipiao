@@ -9,8 +9,10 @@ import org.xiaotianqi.kuaipiao.data.sources.cache.cm.users.UserSessionCM
 import org.xiaotianqi.kuaipiao.data.sources.cache.core.ExpiringCM
 import org.koin.core.annotation.Single
 import org.xiaotianqi.kuaipiao.domain.auth.UserAuthSessionData
+import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true, binds = [UserSessionCM::class])
+@ExperimentalTime
 class UserSessionCMImpl(
     redisClient: RedisClient,
     objectMapper: ObjectMapper,

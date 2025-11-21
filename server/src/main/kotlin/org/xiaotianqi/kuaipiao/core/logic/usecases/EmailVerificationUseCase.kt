@@ -8,7 +8,10 @@ import org.xiaotianqi.kuaipiao.domain.auth.UserData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.xiaotianqi.kuaipiao.domain.email.EmailVerificationData
+import kotlin.time.ExperimentalTime
 
+
+@ExperimentalTime
 object EmailVerificationUseCase : KoinComponent {
     private val emailVerificationDao by inject<EmailVerificationDao>()
     private val tokenGenerator by inject<TokenGenerator>()

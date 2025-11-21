@@ -8,5 +8,17 @@ data class UserAuthSessionData(
     val userId: String,
     val iat: Long,
     val deviceName: String?,
-    val ip: String
+    val ip: String,
+    val token: String,
+    val roles: List<String> = emptyList(),
+    val permissions: List<String> = emptyList()
+)
+
+@Serializable
+data class UserSessionData(
+    val sessionId: String,
+    val userId: String,
+    val token: String,
+    val roles: List<String> = emptyList(),
+    val permissions: List<String> = emptyList()
 )

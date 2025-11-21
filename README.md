@@ -43,7 +43,7 @@
 ### Core Functionality
 * 🧾 **Invoice Management** - Create, send, track, and manage electronic invoices
 * 🌍 **International Compliance** - Support for Ecuador, USA, and other countries
-* 👥 **Multi-Tenant Support** - Isolated data and configurations for different tenants
+* 👥 **Multi-Enterprise Support** - Isolated data and configurations for different enterprises
 * 🔒 **Security** - OAuth2, JWT authentication, and role-based access control
 * 📊 **Reporting & Analytics** - Real-time dashboards and exportable reports
 * ⚡ **Real-time Synchronization** - WebSocket support for instant updates
@@ -94,7 +94,7 @@
 
 **Caching Strategy**:
 - **Multi-tier Caching**: Short-term (5min), Long-term (1hr), Session (30min)
-- **Intelligent Cache Keys**: Tenant/user-specific caching
+- **Intelligent Cache Keys**: Enterprise/user-specific caching
 - **Cache Warming**: Pre-populate frequently accessed data
 - **Response Caching**: HTTP-level caching with proper TTL
 
@@ -105,7 +105,7 @@
 - **Circuit Breakers**: Advanced fault tolerance with metrics
 
 **Middleware Enhancements**:
-- **Rate Limiting V1**: Tenant-specific, endpoint-aware limits
+- **Rate Limiting V1**: Enterprise-specific, endpoint-aware limits
 - **Performance Monitoring**: Real-time request tracking
 - **Response Compression**: Automatic gzip/deflate
 - **Caching Headers**: Smart cache control
@@ -114,7 +114,7 @@
 
 **Connection Management**:
 - **HikariCP**: Optimized connection pooling (20 max, 5 min connections)
-- **Multi-tenant**: Isolated databases with shared optimization
+- **Multi-enterprise**: Isolated databases with shared optimization
 - **Connection Validation**: Automatic health checks and recovery
 
 **Query Optimization**:
@@ -126,7 +126,7 @@
 **Database Configuration**:
 - **PostgreSQL Tuning**: Production-optimized postgresql.conf
 - **Memory Allocation**: 256MB shared buffers, 1GB effective cache
-- **Autovacuum**: Tuned for multi-tenant workloads
+- **Autovacuum**: Tuned for multi-enterprise workloads
 - **Connection Limits**: Balanced for concurrent access
 
 ### 4. Infrastructure Optimization ✅
@@ -190,13 +190,13 @@ Expected Performance Gains:
 ### Database Optimization Results:
 ```
 Indexing Strategy:
-├── 20+ performance indexes for multi-tenant queries
+├── 20+ performance indexes for multi-enterprise queries
 ├── Full-text search optimization
-├── Tenant-specific index patterns
+├── Enterprise-specific index patterns
 └── Audit and monitoring table indexes
 
 Connection Performance:
-├── HikariCP with 20 max connections per tenant
+├── HikariCP with 20 max connections per enterprise
 ├── Connection validation and recovery
 ├── Query caching and preparation optimization
 └── Batch operation support
@@ -205,7 +205,7 @@ PostgreSQL Tuning:
 ├── 256MB shared buffers
 ├── 1GB effective cache size  
 ├── G1GC garbage collection
-└── Autovacuum optimization for multi-tenant
+└── Autovacuum optimization for multi-enterprise
 ```
 
 ---
@@ -250,8 +250,8 @@ WebSocket /api/v1/realtime/invoice-status
 ### GraphQL (Efficient Data Fetching):
 ```graphql
 # Single query for dashboard data
-query DashboardData($tenantId: String!, $countryCode: String!) {
-  dashboard(tenantId: $tenantId, countryCode: $countryCode) {
+query DashboardData($enterpriseId: String!, $countryCode: String!) {
+  dashboard(enterpriseId: $enterpriseId, countryCode: $countryCode) {
     totalInvoices
     totalRevenue
     activeProducts
@@ -295,7 +295,7 @@ mutation BatchCreateInvoices($invoices: [CreateInvoiceInput!]!) {
 1. **Service Discovery**: Health monitoring, load balancing, circuit breakers
 2. **Caching Strategy**: Multi-tier (memory + distributed), smart invalidation
 3. **Database Layer**: Connection pooling, query optimization, batch operations
-4. **Middleware Pipeline**: Rate limiting, tenant isolation, performance monitoring
+4. **Middleware Pipeline**: Rate limiting, enterprise isolation, performance monitoring
 5. **API Design**: RESTful v1/v2 + GraphQL for different use cases
 
 ### Infrastructure Optimizations:

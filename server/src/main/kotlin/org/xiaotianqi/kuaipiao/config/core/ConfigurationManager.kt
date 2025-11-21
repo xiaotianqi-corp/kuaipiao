@@ -17,7 +17,7 @@ class ConfigurationManager(
     companion object {
         private val log = KotlinLogging.logger { }
 
-        const val DEFAULT_CONFIG_PACKAGE = "app.dotoo.config"
+        const val DEFAULT_CONFIG_PACKAGE = "org.xiaotianqi.kuaipiao.config"
     }
 
     @Suppress("UNUSED")

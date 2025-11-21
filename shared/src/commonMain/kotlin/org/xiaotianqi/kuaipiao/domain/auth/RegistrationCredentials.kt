@@ -11,6 +11,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RegistrationCredentials(
+    val username: String? = null,
+    val firstName: String,
+    val lastName: String,
+    val enterpriseId: String? = null,
     val email: String,
     val password: String,
 ) : Validatable<RegistrationCredentials> {

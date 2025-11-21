@@ -14,8 +14,11 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.koin.core.annotation.Single
 import org.xiaotianqi.kuaipiao.domain.password.PasswordResetData
+import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
+@ExperimentalTime
+
 class PasswordResetDBIImpl(
     private val tokenGenerator: TokenGenerator,
 ) : PasswordResetDBI {

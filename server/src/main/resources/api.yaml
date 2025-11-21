@@ -1,0 +1,26 @@
+openapi: 3.1.0
+info:
+  title: Kuaipiao API
+  description: Kuaipiao API
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /api/login:
+    post:
+      summary: Inicia sesión
+      responses:
+        '200':
+          description: Respuesta exitosa
+  /api/users/{id}:
+    get:
+      summary: Obtiene usuario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Respuesta exitosa

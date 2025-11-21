@@ -17,6 +17,6 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
 
-        anyHost() // Public api
+        anyHost()
     }
 }

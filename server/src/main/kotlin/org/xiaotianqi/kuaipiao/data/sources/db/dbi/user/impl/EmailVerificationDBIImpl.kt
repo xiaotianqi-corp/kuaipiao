@@ -14,8 +14,10 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.koin.core.annotation.Single
 import org.xiaotianqi.kuaipiao.domain.email.EmailVerificationData
 import org.xiaotianqi.kuaipiao.domain.auth.UserData
+import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
+@ExperimentalTime
 class EmailVerificationDBIImpl(
     private val tokenGenerator: TokenGenerator,
 ) : EmailVerificationDBI {

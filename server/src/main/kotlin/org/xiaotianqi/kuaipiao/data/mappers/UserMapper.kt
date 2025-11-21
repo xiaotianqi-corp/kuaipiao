@@ -4,32 +4,70 @@ import org.xiaotianqi.kuaipiao.domain.auth.UserData
 import org.xiaotianqi.kuaipiao.domain.auth.UserCreateData
 import org.xiaotianqi.kuaipiao.domain.auth.UserResponse
 import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UserEntity
+import kotlinx.datetime.toKotlinLocalDateTime
+import org.jetbrains.exposed.sql.SizedCollection
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.organization.OrganizationEntity
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.enterprise.EnterpriseEntity
+import java.time.ZoneOffset
 import java.time.Instant
-import java.util.UUID
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
+import kotlin.time.toKotlinInstant
 
+@ExperimentalTime
 fun UserEntity.toDomain() = UserData(
     id = id.value.toString(),
+    username = username,
+    firstName = firstName,
+    lastName = lastName,
     email = email,
-    passwordHash = passwordHash,
     emailVerified = emailVerified,
-    creationTimestamp = createdAt.toEpochMilli()
+    passwordHash = passwordHash,
+    enterpriseId = enterprise.toString(),
+    organizationIds = organizations.map { it.id.value.toString() },
+    isActive = isActive,
+    createdAt = createdAt.toKotlinInstant(),
+    updatedAt = updatedAt?.toKotlinInstant(),
+    lastLoginAt = lastLoginAt?.toKotlinInstant(),
 )
 
+@ExperimentalTime
 fun UserEntity.toResponse() = UserResponse(
     id = id.value.toString(),
+    username = username,
+    firstName = firstName,
+    lastName = lastName,
     email = email,
-    creationTimestamp = createdAt.toEpochMilli()
+    enterpriseId = enterprise.toString(),
+    organizationIds = organizations.map { it.id.value.toString() },
+    createdAt = createdAt.toKotlinInstant(),
+    updatedAt = updatedAt?.toKotlinInstant(),
 )
 
+@ExperimentalTime
 fun UserData.toResponse() = UserResponse(
     id = id,
+    username = username,
+    firstName = firstName,
+    lastName = lastName,
     email = email,
-    creationTimestamp = creationTimestamp
+    enterpriseId = enterpriseId,
+    organizationIds = organizationIds,
+    createdAt = createdAt,
 )
 
-fun UserEntity.fromCreateData(data: UserCreateData) {
+@ExperimentalTime
+fun UserEntity.fromCreateData(
+    data: UserCreateData,
+    enterpriseEntity: EnterpriseEntity,
+    organizationEntities: List<OrganizationEntity> = emptyList()
+) {
+    username = data.username
+    firstName = data.firstName
+    lastName = data.lastName
+    enterprise = enterpriseEntity
+    organizations = SizedCollection(organizationEntities)
     email = data.email
     passwordHash = data.passwordHash
-    emailVerified = data.emailVerified
-    createdAt = Instant.ofEpochMilli(data.creationTimestamp)
+    createdAt = data.createdAt.toJavaInstant()
 }
