@@ -45,16 +45,16 @@ fun Application.configureOpenAPI() {
         }
 
         externalDocs {
-            url = "https://developer.xiaotianqi.com/kuaipiao"
+            url = "https://xiaotianqi.com/kuaipiao"
             description = "Documentación completa del proyecto"
         }
 
         server {
-            url = "http://developer.localhost:${ApiConfig.port}"
+            url = "http://localhost:${ApiConfig.port}"
             description = "Servidor de desarrollo local"
         }
         server {
-            url = "https://api.xiaotianqi.com/kuaipiao"
+            url = "https://xiaotianqi.com/kuaipiao"
             description = "Servidor de producción"
         }
 
@@ -109,15 +109,23 @@ fun Application.configureOpenAPI() {
 
     routing {
         get("/openapi.json") {
-            val specFile = File("build/open-api.json")
-            if (specFile.exists()) {
-                call.respondText(
-                    text = specFile.readText(),
-                    contentType = ContentType.Application.Json
-                )
-            } else {
-                call.respond(HttpStatusCode.NotFound, "OpenAPI spec not found")
+            // Try to load from generated spec file first, then from resources
+            val specContent = try {
+                val classLoader = this::class.java.classLoader
+                classLoader.getResourceAsStream("api.json")?.bufferedReader()?.readText()
+                    ?: File("build/resources/main/api.json").takeIf { it.exists() }?.readText()
+                    ?: "{\"error\": \"OpenAPI spec not found\"}"
+            } catch (e: Exception) {
+                "{\"error\": \"Error loading OpenAPI spec: ${e.message}\"}"
             }
+            call.respondText(
+                text = specContent,
+                contentType = ContentType.Application.Json
+            )
+        }
+
+        route("api.json") {
+            openApi()
         }
 
         route("api.yaml") {
@@ -148,7 +156,7 @@ fun Application.configureOpenAPI() {
         }
 
         route("swagger") {
-            swaggerUI("/api.json") {
+            swaggerUI("/openapi.json") {
                 deepLinking = true
                 displayOperationId = true
                 defaultModelsExpandDepth = 1
@@ -161,4 +169,10 @@ fun Application.configureOpenAPI() {
             }
         }
     }
+}
+
+private fun RoutingCall.respond(
+    message: HttpStatusCode,
+    typeInfo: Map<String, String>
+) {
 }

@@ -43,12 +43,11 @@ class PermissionsRouteSelector(private val permissions: List<String>) : RouteSel
         context.call.attributes.put(RequiredPermissionsKey, permissions)
         return RouteSelectorEvaluation.Constant
     }
+    
+    override fun toString(): String = "(permissions: ${permissions.joinToString(", ")})"
 }
 
-
 fun Route.withPermissions(vararg permissions: String, build: Route.() -> Unit) {
-    intercept(ApplicationCallPipeline.Call) {
-        call.attributes.put(RequiredPermissionsKey, permissions.toList())
-    }
-    build()
+    val authorizedRoute = this.createChild(PermissionsRouteSelector(permissions.toList()))
+    authorizedRoute.build()
 }

@@ -24,21 +24,6 @@ application {
     )
 }
 
-ktor {
-    @OptIn(OpenApiPreview::class)
-    openApi {
-        title = "KuaiPiao OpenApi"
-        version = "1.0.0"
-        summary = "This is a Kuaipiao API by Xiaotianqi"
-        description = "This is a longer description"
-        termsOfService = "https://xiaotianqi.com/kuaipiao/terms/"
-        contact = "contact@xiaotianqi.com"
-        license = "Apache/1.0"
-
-        target = project.layout.buildDirectory.file("open-api.json")
-    }
-}
-
 dependencies {
     implementation(libs.dotenv)
     implementation(projects.shared)
@@ -84,4 +69,19 @@ tasks.register<JavaExec>("migrateRollback") {
     description = "Revierte la última migración aplicada (requiere confirmación)"
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.xiaotianqi.kuaipiao.scripts.RollbackMigrationsKt")
+}
+
+tasks.register<JavaExec>("generateOpenApiSpecFile") {
+    group = "openapi"
+    description = "Generate OpenAPI specification from routes"
+    dependsOn("classes")
+
+    mainClass = "org.xiaotianqi.kuaipiao.scripts.GenerateOpenApiSpecKt"
+    classpath = sourceSets["main"].runtimeClasspath
+    standardOutput = System.out
+    errorOutput = System.err
+}
+
+tasks.named("buildOpenApi") {
+    finalizedBy("generateOpenApiSpecFile")
 }

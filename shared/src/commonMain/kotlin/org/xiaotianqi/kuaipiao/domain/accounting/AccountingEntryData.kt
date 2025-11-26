@@ -1,6 +1,5 @@
 package org.xiaotianqi.kuaipiao.domain.accounting
 
-
 import kotlinx.serialization.Serializable
 import org.xiaotianqi.kuaipiao.domain.validation.ValidationResult
 import org.xiaotianqi.kuaipiao.enums.*

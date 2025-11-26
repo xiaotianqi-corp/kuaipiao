@@ -1,119 +1,2595 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "Kuaipiao API",
-    "description": "Kuaipiao API",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://localhost:8080",
-      "description": "Servidor de desarrollo"
-    }
-  ],
-  "paths": {
-    "/api/login": {
-      "post": {
-        "summary": "Inicia sesión",
-        "description": "Recibe las credenciales del usuario y devuelve un token JWT.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Inicio de sesión exitoso.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Credenciales inválidas."
-          }
+    "openapi": "3.0.0",
+    "info": {
+        "title": "KuaiPiao OpenAPI",
+        "version": "1.0.0",
+        "description": "Auto-generated from @ApiRoute annotations",
+        "contact": {
+            "name": "KuaiPiao Support",
+            "email": "contact@xiaotianqi.com"
         }
-      }
     },
-    "/api/users/{id}": {
-      "get": {
-        "summary": "Obtiene usuario",
-        "description": "Devuelve la información de un usuario según su ID.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Identificador único del usuario."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Respuesta exitosa.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Usuario no encontrado."
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "LoginRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "user@kuaipiao.com"
-          },
-          "password": {
-            "type": "string",
-            "example": "123456"
-          }
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Dev"
         },
-        "required": ["email", "password"]
-      },
-      "LoginResponse": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "example": "mock-token"
-          }
+        {
+            "url": "https://api.xiaotianqi.com",
+            "description": "Prod"
         }
-      },
-      "UserResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "1234"
-          },
-          "name": {
-            "type": "string",
-            "example": "Allan"
-          }
+    ],
+    "paths": {
+        "/api/v1/sign-up": {
+            "post": {
+                "summary": "Register super admin",
+                "operationId": "postadminregisterroute",
+                "tags": [
+                    "Admin Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/sign-up \\\n  --request POST \\\n  --header 'Content-Type: application/json'"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/profile": {
+            "get": {
+                "summary": "Get admin profile",
+                "operationId": "getadminprofileroute",
+                "tags": [
+                    "Admin Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/profile \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/verification-notification": {
+            "post": {
+                "summary": "Send verification email",
+                "operationId": "postsendverificationemailroute",
+                "tags": [
+                    "Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/verification-notification \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/verify-email": {
+            "get": {
+                "summary": "Verify email address",
+                "operationId": "getverifyemailroute",
+                "tags": [
+                    "Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/verify-email \\\n  --request GET \\\n  --header 'Content-Type: application/json'"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/password-forgotten": {
+            "get": {
+                "summary": "Request password reset",
+                "operationId": "getpasswordforgottenroute",
+                "tags": [
+                    "Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/password-forgotten \\\n  --request GET \\\n  --header 'Content-Type: application/json'"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}": {
+            "delete": {
+                "summary": "Delete user",
+                "operationId": "deleteadminremoveuserroute",
+                "tags": [
+                    "Admin User Management"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/users/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "summary": "Get user by ID",
+                "operationId": "getadminuserbyidroute",
+                "tags": [
+                    "Admin User Management"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/users/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/status": {
+            "put": {
+                "summary": "Update user status",
+                "operationId": "putadminupdatestatusroute",
+                "tags": [
+                    "Admin User Management"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/users/{id}/status \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "get": {
+                "summary": "Logout user",
+                "operationId": "getlogoutroute",
+                "tags": [
+                    "Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/logout \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reset-password": {
+            "post": {
+                "summary": "Reset password with token",
+                "operationId": "postresetpasswordroute",
+                "tags": [
+                    "Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/reset-password \\\n  --request POST \\\n  --header 'Content-Type: application/json'"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/is-email-verified": {
+            "post": {
+                "summary": "Check if email is verified",
+                "operationId": "postisemailverifiedroute",
+                "tags": [
+                    "Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/is-email-verified \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "summary": "List all users",
+                "operationId": "getadminuserroute",
+                "tags": [
+                    "Admin User Management"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/users \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/roles": {
+            "post": {
+                "summary": "Assign role to user",
+                "operationId": "postadminaddroleuserroute",
+                "tags": [
+                    "Admin User Management"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/users/{id}/roles \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sign-in": {
+            "post": {
+                "summary": "Authenticate user",
+                "operationId": "postloginroute",
+                "tags": [
+                    "Authentication"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/sign-in \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"email\":\"user@example.com\",\"password\":\"password123\"}'"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginCredentials"
+                            },
+                            "example": {
+                                "email": "user@example.com",
+                                "password": "password123"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                },
+                                "example": {
+                                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                                    "username": "user",
+                                    "email": "user@example.com",
+                                    "firstName": "John",
+                                    "lastName": "Doe",
+                                    "enterpriseId": "ent-123",
+                                    "organizationIds": [],
+                                    "roleIds": [],
+                                    "createdAt": "2024-01-01T00:00:00Z"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/delete/{id}": {
+            "delete": {
+                "summary": "Delete Enterprise",
+                "operationId": "deleteenterpriseremoveroute",
+                "tags": [
+                    "Enterprise"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/delete/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/find/id/{id}": {
+            "get": {
+                "summary": "Get organization by ID",
+                "operationId": "getorganizationsearchbyidroute",
+                "tags": [
+                    "Organization"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/find/id/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/create": {
+            "post": {
+                "summary": "Create enterprise",
+                "operationId": "postenterprisecreateroute",
+                "tags": [
+                    "Enterprise"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/create \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/find/tax-id/{taxId}": {
+            "get": {
+                "summary": "Get company by tax ID",
+                "operationId": "getcompanysearchbytaxidroute",
+                "tags": [
+                    "Company"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/find/tax-id/{taxId} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/find/industry/{id}": {
+            "get": {
+                "summary": "Get company by Industry",
+                "operationId": "getcompanysearchbyindustry",
+                "tags": [
+                    "Company"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/find/industry/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/update/{id}/industry": {
+            "put": {
+                "summary": "Update company by ID",
+                "operationId": "putcompanyupdateindustryroute",
+                "tags": [
+                    "Company"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/update/{id}/industry \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/find/code/{code}": {
+            "get": {
+                "summary": "Get organization by code",
+                "operationId": "getorganizationsearchbycoderoute",
+                "tags": [
+                    "Organization"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/find/code/{code} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/update/{id}/status": {
+            "put": {
+                "summary": "Update enterprise status",
+                "operationId": "putenterpriseupdatestatusroute",
+                "tags": [
+                    "Enterprise"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/update/{id}/status \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/find/subdomain/{subdomain}": {
+            "get": {
+                "summary": "Get enterprise by domain",
+                "operationId": "getenterprisesearchbysubdomainroute",
+                "tags": [
+                    "Enterprise"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/find/subdomain/{subdomain} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/find/{id}": {
+            "get": {
+                "summary": "Get enterprise by ID",
+                "operationId": "getenterprisesearchbyidroute",
+                "tags": [
+                    "Enterprise"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/find/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/update/{id}/plan": {
+            "put": {
+                "summary": "Update enterprise plan",
+                "operationId": "putenterpriseupdateplanroute",
+                "tags": [
+                    "Enterprise"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "curl",
+                        "source": "curl https://api.xiaotianqi.com/api/v1/update/{id}/plan \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"
+                    }
+                ],
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Invalid request parameters",
+                                            "long_message": "The request contains invalid or missing parameters",
+                                            "code": "validation_error",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Authentication required",
+                                            "long_message": "Valid authentication credentials are required",
+                                            "code": "authentication_required",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "example": {
+                                    "errors": [
+                                        {
+                                            "message": "Validation failed",
+                                            "long_message": "The provided data failed validation checks",
+                                            "code": "validation_failed",
+                                            "meta": {}
+                                        }
+                                    ],
+                                    "meta": {},
+                                    "clerk_trace_id": "trace_12345"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
+    },
+    "components": {
+        "securitySchemes": {
+            "SessionAuth": {
+                "type": "apiKey",
+                "name": "user_session_id",
+                "in": "cookie",
+                "description": "Session cookie"
+            },
+            "JWTAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT token"
+            }
+        },
+        "schemas": {
+            "ErrorResponse": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "meta": {
+                        "type": "object"
+                    },
+                    "clerk_trace_id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "errors",
+                    "meta"
+                ]
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "long_message": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "message",
+                    "code"
+                ]
+            },
+            "UserResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "enterpriseId": {
+                        "type": "string"
+                    },
+                    "organizationIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "roleIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "email",
+                    "firstName",
+                    "lastName"
+                ]
+            },
+            "LoginCredentials": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "RegistrationCredentials": {
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "enterpriseId": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "password"
+                ]
+            }
+        }
     }
-  }
 }

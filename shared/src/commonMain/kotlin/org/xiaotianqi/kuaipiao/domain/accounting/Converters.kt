@@ -1,4 +1,3 @@
-// File: Converters.kt (actualizado)
 package org.xiaotianqi.kuaipiao.domain.accounting
 
 import kotlin.time.ExperimentalTime

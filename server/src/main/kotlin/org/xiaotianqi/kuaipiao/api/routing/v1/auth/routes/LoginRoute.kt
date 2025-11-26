@@ -20,6 +20,7 @@ import io.ktor.server.sessions.*
 import org.koin.ktor.ext.inject
 import org.xiaotianqi.kuaipiao.api.security.JwtService
 import org.xiaotianqi.kuaipiao.data.daos.rbac.PermissionDao
+import org.xiaotianqi.kuaipiao.domain.auth.UserSessionCookie
 import org.xiaotianqi.kuaipiao.domain.rbac.PermissionData
 import org.xiaotianqi.kuaipiao.domain.rbac.RoleData
 import java.util.UUID
@@ -74,12 +75,9 @@ fun Route.loginRoute() {
             permissionIds.map { DtId<PermissionData>(UUID.fromString(it)) }
         )
 
-        val session = UserSessionData(
-            sessionId = userSessionId.toString(),
+        val session = UserSessionCookie(
             userId = user.id,
-            token = token,
-            roles = roles.map { it.name },
-            permissions = permissions.map { it.code }
+            sessionId = userSessionId.toString()
         )
 
         call.sessions.set(session)

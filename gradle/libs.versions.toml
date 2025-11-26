@@ -23,7 +23,7 @@ ktorTests = "3.1.2-eap-1251"
 testcontainers = "1.21.3"
 
 # Core Technologies
-kotlin = "2.2.21"
+kotlin = "2.2.20"
 ktor = "3.3.2"
 logback = "1.5.21"
 koin = "4.1.1"
@@ -151,6 +151,7 @@ ktor-server-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version.re
 ktor-server-metrics = { module = "io.ktor:ktor-server-metrics", version.ref = "ktor" }
 ktor-server-metrics-jvm = { module = "io.ktor:ktor-server-metrics-jvm", version.ref = "ktor" }
 ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
+ktor-server-swagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor" }
 ktor-server-open-generator = { module = "io.github.smiley4:ktor-openapi", version.ref = "ktor-swagger" }
 ktor-server-schema-kenerator = { module = "io.github.smiley4:schema-kenerator-core", version.ref = "ktor-kenerator"}
 ktor-server-schema-swagger = { module = "io.github.smiley4:schema-kenerator-swagger", version.ref = "ktor-kenerator"}
@@ -351,6 +352,7 @@ androidx = [
 swagger = [
     "ktor-swagger",
     "ktor-server-openapi",
+    "ktor-server-swagger",
     "ktor-server-open-generator",
     "ktor-server-schema-kenerator",
     "ktor-server-schema-swagger"

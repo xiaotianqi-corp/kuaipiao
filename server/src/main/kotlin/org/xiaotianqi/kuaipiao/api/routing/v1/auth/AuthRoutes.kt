@@ -9,30 +9,82 @@ import org.xiaotianqi.kuaipiao.api.routing.v1.auth.routes.registerRoute
 import io.ktor.resources.*
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.*
+import org.xiaotianqi.kuaipiao.scripts.ApiRoute
 import kotlin.time.ExperimentalTime
 
 @Resource("/sign-up")
+@ApiRoute(
+    method = "POST",
+    summary = "Register new user",
+    tag = "Authentication",
+    requestSchema = "RegistrationCredentials",
+    responseSchema = "UserResponse",
+    exampleRequest = """{"firstName":"John","lastName":"Doe","email":"john@example.com","password":"SecurePass123"}""",
+    exampleResponse = """{"message":"Verification email sent"}"""
+)
 class RegisterRoute
 
 @Resource("/sign-in")
+@ApiRoute(
+    method = "POST",
+    summary = "Authenticate user",
+    tag = "Authentication",
+    requestSchema = "LoginCredentials",
+    responseSchema = "UserResponse",
+    exampleRequest = """{"email":"user@example.com","password":"password123"}""",
+    exampleResponse = """{"id":"123e4567-e89b-12d3-a456-426614174000","username":"user","email":"user@example.com","firstName":"John","lastName":"Doe","enterpriseId":"ent-123","organizationIds":[],"roleIds":[],"createdAt":"2024-01-01T00:00:00Z"}"""
+)
 class LoginRoute
 
 @Resource("/logout")
+@ApiRoute(
+    method = "GET",
+    summary = "Logout user",
+    tag = "Authentication",
+    requiresAuth = true
+)
 class LogoutRoute
 
 @Resource("/verify-email")
+@ApiRoute(
+    method = "GET",
+    summary = "Verify email address",
+    tag = "Authentication"
+)
 class VerifyEmailRoute(val token: String)
 
 @Resource("/is-email-verified")
+@ApiRoute(
+    method = "POST",
+    summary = "Check if email is verified",
+    tag = "Authentication",
+    requiresAuth = true
+)
 class IsEmailVerifiedRoute
 
 @Resource("/password-forgotten")
+@ApiRoute(
+    method = "GET",
+    summary = "Request password reset",
+    tag = "Authentication"
+)
 class PasswordForgottenRoute(val email: String)
 
 @Resource("/reset-password")
+@ApiRoute(
+    method = "POST",
+    summary = "Reset password with token",
+    tag = "Authentication"
+)
 class ResetPasswordRoute(val token: String)
 
 @Resource("/verification-notification")
+@ApiRoute(
+    method = "POST",
+    summary = "Send verification email",
+    tag = "Authentication",
+    requiresAuth = true
+)
 class SendVerificationEmailRoute
 
 @ExperimentalTime

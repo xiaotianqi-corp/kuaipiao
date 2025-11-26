@@ -21,7 +21,7 @@ class JwtService(
     fun generateToken(
         userId: String,
         roles: List<String> = emptyList(),
-        expiresInMs: Long = 24 * 60 * 60 * 1000 // 24h
+        expiresInMs: Long = 24 * 60 * 60 * 1000
     ): String {
         val now = Date()
         val expires = Date(now.time + expiresInMs)
