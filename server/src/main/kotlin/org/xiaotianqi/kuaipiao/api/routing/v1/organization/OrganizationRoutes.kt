@@ -14,27 +14,35 @@ import kotlin.time.ExperimentalTime
 @Resource("/create")
 @ApiRoute(
     method = "POST",
-    summary = "Create organization",
+    summary = "Create a new organization",
     tag = "Organization",
-    requiresAuth = true
+    requiresAuth = true,
+    requestSchema = "CreateOrganizationRequest",
+    responseSchema = "OrganizationResponse",
+    exampleRequest = """{"name":"Engineering Dept","code":"ENG-001","enterpriseId":"ent-123"}""",
+    exampleResponse = """{"id":"org-001","name":"Engineering Dept","code":"ENG-001","status":"active","enterpriseId":"ent-123","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class OrganizationCreateRoute
 
 @Resource("/find/id/{id}")
 @ApiRoute(
     method = "GET",
-    summary = "Get organization by ID",
+    summary = "Retrieve organization by ID",
     tag = "Organization",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "OrganizationResponse",
+    exampleResponse = """{"id":"org-001","name":"Engineering Dept","code":"ENG-001","status":"active","enterpriseId":"ent-123","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class OrganizationSearchByIdRoute(val id: String)
 
 @Resource("/find/code/{code}")
 @ApiRoute(
     method = "GET",
-    summary = "Get organization by code",
+    summary = "Retrieve organization by code",
     tag = "Organization",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "OrganizationResponse",
+    exampleResponse = """{"id":"org-001","name":"Engineering Dept","code":"ENG-001","status":"active","enterpriseId":"ent-123","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class OrganizationSearchByCodeRoute(val code: String)
 
@@ -43,16 +51,22 @@ class OrganizationSearchByCodeRoute(val code: String)
     method = "PUT",
     summary = "Update organization status",
     tag = "Organization",
-    requiresAuth = true
+    requiresAuth = true,
+    requestSchema = "UpdateOrganizationStatusRequest",
+    responseSchema = "OrganizationResponse",
+    exampleRequest = """{"status":"inactive"}""",
+    exampleResponse = """{"id":"org-001","name":"Engineering Dept","code":"ENG-001","status":"inactive","enterpriseId":"ent-123","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T10:00:00Z"}"""
 )
 class OrganizationUpdateStatusRoute(val id: String)
 
 @Resource("/delete/{id}")
 @ApiRoute(
     method = "DELETE",
-    summary = "Delete organization",
+    summary = "Delete organization by ID",
     tag = "Organization",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "DeleteMessageResponse",
+    exampleResponse = """{"message":"Organization deleted successfully"}"""
 )
 data class OrganizationRemoveRoute(val id: String)
 

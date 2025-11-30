@@ -15,7 +15,7 @@ import kotlin.time.toJavaInstant
 import kotlin.time.toKotlinInstant
 
 object EnterprisesTable : UUIDTable("enterprises") {
-    val subdomain = varchar("subdomain", 63).uniqueIndex()
+    val subdomain = varchar("subdomain", 63)
     val domain = varchar("domain", 255).nullable()
     val status = enumerationByName("status", 20, EntityStatus::class)
     val plan = enumerationByName("plan", 20, EnterprisePlan::class)

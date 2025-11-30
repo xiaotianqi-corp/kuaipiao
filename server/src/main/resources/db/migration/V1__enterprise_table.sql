@@ -11,8 +11,6 @@ CREATE TABLE IF NOT EXISTS enterprises (
     expires_at TIMESTAMP NULL
 );
 
-ALTER TABLE enterprises ADD CONSTRAINT enterprises_subdomain_unique UNIQUE (subdomain);
-
 CREATE TABLE IF NOT EXISTS enterprise_migrations (
     id uuid PRIMARY KEY,
     enterprise_id uuid NOT NULL,
@@ -44,7 +42,7 @@ CREATE TABLE IF NOT EXISTS enterprise_backups (
 
 CREATE TABLE IF NOT EXISTS enterprise_audit_logs (
     id uuid PRIMARY KEY,
-    enterprise_id uuid NOT NULL,
+    _id uuid NOT NULL,
     "action" VARCHAR(50) NOT NULL,
     actor_id VARCHAR(255) NOT NULL,
     actor_type VARCHAR(50) NOT NULL,
@@ -52,5 +50,5 @@ CREATE TABLE IF NOT EXISTS enterprise_audit_logs (
     ip_address VARCHAR(45) NULL,
     user_agent TEXT NULL,
     created_at TIMESTAMP NOT NULL,
-    CONSTRAINT fk_enterprise_audit_logs_enterprise_id__id FOREIGN KEY (enterprise_id) REFERENCES enterprises(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+    CONSTRAINT fk_enterprise_audit_logs__id__id FOREIGN KEY (_id) REFERENCES enterprises(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );

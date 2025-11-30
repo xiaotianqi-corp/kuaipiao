@@ -18,7 +18,7 @@ import kotlin.time.ExperimentalTime
     summary = "Register new user",
     tag = "Authentication",
     requestSchema = "RegistrationCredentials",
-    responseSchema = "UserResponse",
+    responseSchema = "VerificationMessageResponse",
     exampleRequest = """{"firstName":"John","lastName":"Doe","email":"john@example.com","password":"SecurePass123"}""",
     exampleResponse = """{"message":"Verification email sent"}"""
 )
@@ -41,15 +41,19 @@ class LoginRoute
     method = "GET",
     summary = "Logout user",
     tag = "Authentication",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "MessageResponse",
+    exampleResponse = """{"message":"Logout successful"}"""
 )
 class LogoutRoute
 
 @Resource("/verify-email")
 @ApiRoute(
     method = "GET",
-    summary = "Verify email address",
-    tag = "Authentication"
+    summary = "Verify email address with token",
+    tag = "Authentication",
+    responseSchema = "MessageResponse",
+    exampleResponse = """{"message":"Email verified successfully"}"""
 )
 class VerifyEmailRoute(val token: String)
 
@@ -58,23 +62,31 @@ class VerifyEmailRoute(val token: String)
     method = "POST",
     summary = "Check if email is verified",
     tag = "Authentication",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "VerificationStatusResponse",
+    exampleResponse = """{"verified":true}"""
 )
 class IsEmailVerifiedRoute
 
 @Resource("/password-forgotten")
 @ApiRoute(
     method = "GET",
-    summary = "Request password reset",
-    tag = "Authentication"
+    summary = "Request password reset email",
+    tag = "Authentication",
+    responseSchema = "MessageResponse",
+    exampleResponse = """{"message":"Password reset email sent"}"""
 )
 class PasswordForgottenRoute(val email: String)
 
 @Resource("/reset-password")
 @ApiRoute(
     method = "POST",
-    summary = "Reset password with token",
-    tag = "Authentication"
+    summary = "Reset password with reset token",
+    tag = "Authentication",
+    requestSchema = "ResetPasswordRequest",
+    responseSchema = "MessageResponse",
+    exampleRequest = """{"password":"NewSecurePass123"}""",
+    exampleResponse = """{"message":"Password reset successfully"}"""
 )
 class ResetPasswordRoute(val token: String)
 
@@ -83,7 +95,9 @@ class ResetPasswordRoute(val token: String)
     method = "POST",
     summary = "Send verification email",
     tag = "Authentication",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "MessageResponse",
+    exampleResponse = """{"message":"Verification email sent"}"""
 )
 class SendVerificationEmailRoute
 

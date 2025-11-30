@@ -1,6 +1,5 @@
 package org.xiaotianqi.kuaipiao.api.routing.v1.auth
 
-
 import io.ktor.resources.*
 import io.ktor.server.routing.*
 import org.xiaotianqi.kuaipiao.api.routing.v1.auth.routes.admin.adminAddRoleUserRoutes
@@ -17,7 +16,11 @@ import kotlin.time.ExperimentalTime
 @ApiRoute(
     method = "POST",
     summary = "Register super admin",
-    tag = "Admin Authentication"
+    tag = "Admin Authentication",
+    requestSchema = "CreateSuperAdminRequest",
+    responseSchema = "MessageResponse",
+    exampleRequest = """{"email":"admin@kuaipiao.com","password":"SecureAdminPass123"}""",
+    exampleResponse = """{"message":"Super admin created successfully"}"""
 )
 class AdminRegisterRoute
 
@@ -27,7 +30,9 @@ class AdminRegisterRoute
     summary = "Get admin profile",
     tag = "Admin Authentication",
     requiresAuth = true,
-    authType = "JWTAuth"
+    authType = "JWTAuth",
+    responseSchema = "UserResponse",
+    exampleResponse = """{"id":"admin-001","username":"admin","email":"admin@kuaipiao.com","firstName":"Admin","lastName":"User","enterpriseId":"","organizationIds":[],"roleIds":["admin"],"createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class AdminProfileRoute
 
@@ -37,7 +42,9 @@ class AdminProfileRoute
     summary = "List all users",
     tag = "Admin User Management",
     requiresAuth = true,
-    authType = "JWTAuth"
+    authType = "JWTAuth",
+    responseSchema = "UserListResponse",
+    exampleResponse = """{"users":[{"id":"user-001","username":"user","email":"user@example.com","firstName":"John","lastName":"Doe","enterpriseId":"ent-123","organizationIds":[],"roleIds":[],"createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}],"total":1}"""
 )
 class AdminUserRoute
 
@@ -47,7 +54,9 @@ class AdminUserRoute
     summary = "Get user by ID",
     tag = "Admin User Management",
     requiresAuth = true,
-    authType = "JWTAuth"
+    authType = "JWTAuth",
+    responseSchema = "UserResponse",
+    exampleResponse = """{"id":"user-001","username":"user","email":"user@example.com","firstName":"John","lastName":"Doe","enterpriseId":"ent-123","organizationIds":[],"roleIds":[],"createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class AdminUserByIdRoute
 
@@ -57,7 +66,11 @@ class AdminUserByIdRoute
     summary = "Update user status",
     tag = "Admin User Management",
     requiresAuth = true,
-    authType = "JWTAuth"
+    authType = "JWTAuth",
+    requestSchema = "UpdateUserStatusRequest",
+    responseSchema = "UserResponse",
+    exampleRequest = """{"status":"inactive"}""",
+    exampleResponse = """{"id":"user-001","username":"user","email":"user@example.com","firstName":"John","lastName":"Doe","enterpriseId":"ent-123","organizationIds":[],"roleIds":[],"createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T10:00:00Z"}"""
 )
 class AdminUpdateStatusRoute
 
@@ -67,7 +80,9 @@ class AdminUpdateStatusRoute
     summary = "Delete user",
     tag = "Admin User Management",
     requiresAuth = true,
-    authType = "JWTAuth"
+    authType = "JWTAuth",
+    responseSchema = "MessageResponse",
+    exampleResponse = """{"message":"User deleted successfully"}"""
 )
 class AdminRemoveUserRoute
 
@@ -77,7 +92,11 @@ class AdminRemoveUserRoute
     summary = "Assign role to user",
     tag = "Admin User Management",
     requiresAuth = true,
-    authType = "JWTAuth"
+    authType = "JWTAuth",
+    requestSchema = "AssignRoleRequest",
+    responseSchema = "UserResponse",
+    exampleRequest = """{"roleId":"role-123"}""",
+    exampleResponse = """{"id":"user-001","username":"user","email":"user@example.com","firstName":"John","lastName":"Doe","enterpriseId":"ent-123","organizationIds":[],"roleIds":["role-123"],"createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T10:00:00Z"}"""
 )
 class AdminAddRoleUserRoute
 

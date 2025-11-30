@@ -15,27 +15,35 @@ import kotlin.time.ExperimentalTime
 @Resource("/create")
 @ApiRoute(
     method = "POST",
-    summary = "Create enterprise",
+    summary = "Create a new enterprise",
     tag = "Enterprise",
-    requiresAuth = true
+    requiresAuth = true,
+    requestSchema = "CreateEnterpriseRequest",
+    responseSchema = "EnterpriseResponse",
+    exampleRequest = """{"name":"Tech Corp","subdomain":"techcorp","plan":"professional"}""",
+    exampleResponse = """{"id":"ent-001","name":"Tech Corp","subdomain":"techcorp","status":"active","plan":"professional","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class EnterpriseCreateRoute
 
 @Resource("/find/{id}")
 @ApiRoute(
     method = "GET",
-    summary = "Get enterprise by ID",
+    summary = "Retrieve enterprise by ID",
     tag = "Enterprise",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "EnterpriseResponse",
+    exampleResponse = """{"id":"ent-001","name":"Tech Corp","subdomain":"techcorp","status":"active","plan":"professional","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class EnterpriseSearchByIdRoute(val id: String)
 
 @Resource("/find/subdomain/{subdomain}")
 @ApiRoute(
     method = "GET",
-    summary = "Get enterprise by domain",
+    summary = "Retrieve enterprise by subdomain",
     tag = "Enterprise",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "EnterpriseResponse",
+    exampleResponse = """{"id":"ent-001","name":"Tech Corp","subdomain":"techcorp","status":"active","plan":"professional","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}"""
 )
 class EnterpriseSearchBySubdomainRoute(val subdomain: String)
 
@@ -44,25 +52,35 @@ class EnterpriseSearchBySubdomainRoute(val subdomain: String)
     method = "PUT",
     summary = "Update enterprise status",
     tag = "Enterprise",
-    requiresAuth = true
+    requiresAuth = true,
+    requestSchema = "UpdateEnterpriseStatusRequest",
+    responseSchema = "EnterpriseResponse",
+    exampleRequest = """{"status":"suspended"}""",
+    exampleResponse = """{"id":"ent-001","name":"Tech Corp","subdomain":"techcorp","status":"suspended","plan":"professional","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T10:00:00Z"}"""
 )
 class EnterpriseUpdateStatusRoute(val id: String)
 
 @Resource("/update/{id}/plan")
 @ApiRoute(
     method = "PUT",
-    summary = "Update enterprise plan",
+    summary = "Update enterprise subscription plan",
     tag = "Enterprise",
-    requiresAuth = true
+    requiresAuth = true,
+    requestSchema = "UpdateEnterprisePlanRequest",
+    responseSchema = "EnterpriseResponse",
+    exampleRequest = """{"plan":"enterprise"}""",
+    exampleResponse = """{"id":"ent-001","name":"Tech Corp","subdomain":"techcorp","status":"active","plan":"enterprise","createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T10:00:00Z"}"""
 )
 class EnterpriseUpdatePlanRoute(val id: String)
 
 @Resource("/delete/{id}")
 @ApiRoute(
     method = "DELETE",
-    summary = "Delete Enterprise",
+    summary = "Delete enterprise by ID",
     tag = "Enterprise",
-    requiresAuth = true
+    requiresAuth = true,
+    responseSchema = "DeleteMessageResponse",
+    exampleResponse = """{"message":"Enterprise deleted successfully"}"""
 )
 data class EnterpriseRemoveRoute(val id: String)
 

@@ -2,25 +2,46 @@ openapi: 3.0.0
 info:
   title: KuaiPiao OpenAPI
   version: 1.0.0
-  description: Auto-generated from @ApiRoute annotations
+  description: Comprehensive API documentation for KuaiPiao - Invoice Processing & Management Platform
   contact:
     name: KuaiPiao Support
-    email: contact@xiaotianqi.com
+    url: https://kuaipiao.com
+    email: support@kuaipiao.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
-  - {"url":"http://localhost:8080","description":"Dev"}
-  - {"url":"https://api.xiaotianqi.com","description":"Prod"}
+  - {"url":"http://localhost:8080","description":"Development"}
+  - {"url":"https://api.kuaipiao.com","description":"Production"}
 paths:
-  /api/v1/sign-up:
+  /api/v1/oauth/sign-up:
     post:
-      summary: Register super admin
-      operationId: postadminregisterroute
+      summary: Register new user
+      operationId: postregisterroute
       tags:
-        - "Admin Authentication"
+        - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/sign-up \\\n  --request POST \\\n  --header 'Content-Type: application/json'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/sign-up \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john@example.com\",\"password\":\"SecurePass123\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/RegistrationCredentials
+            example:
+              firstName: John
+              lastName: Doe
+              email: john@example.com
+              password: SecurePass123
       responses:
         201:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/VerificationMessageResponse
+              example:
+                message: Verification email sent
         400:
           description: Bad request
           content:
@@ -49,19 +70,35 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/profile:
+  /api/v1/oauth/admin/profile:
     get:
       summary: Get admin profile
       operationId: getadminprofileroute
       tags:
         - "Admin Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/profile \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/admin/profile \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"JWTAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/UserResponse
+              example:
+                id: admin-001
+                username: admin
+                email: admin@kuaipiao.com
+                firstName: Admin
+                lastName: User
+                enterpriseId: 
+                organizationIds: []
+                roleIds:
+                  - "admin"
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
         400:
           description: Bad request
           content:
@@ -101,19 +138,25 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/verification-notification:
+  /api/v1/oauth/verification-notification:
     post:
       summary: Send verification email
       operationId: postsendverificationemailroute
       tags:
         - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/verification-notification \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/verification-notification \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
         201:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/MessageResponse
+              example:
+                message: Verification email sent
         400:
           description: Bad request
           content:
@@ -153,17 +196,23 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/verify-email:
+  /api/v1/oauth/verify-email:
     get:
-      summary: Verify email address
+      summary: Verify email address with token
       operationId: getverifyemailroute
       tags:
         - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/verify-email \\\n  --request GET \\\n  --header 'Content-Type: application/json'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/verify-email \\\n  --request GET \\\n  --header 'Content-Type: application/json'"}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/MessageResponse
+              example:
+                message: Email verified successfully
         400:
           description: Bad request
           content:
@@ -192,17 +241,77 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/password-forgotten:
+  /api/v1/oauth/admin/sign-up:
+    post:
+      summary: Register super admin
+      operationId: postadminregisterroute
+      tags:
+        - "Admin Authentication"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/admin/sign-up \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"email\":\"admin@kuaipiao.com\",\"password\":\"SecureAdminPass123\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/CreateSuperAdminRequest
+            example:
+              email: admin@kuaipiao.com
+              password: SecureAdminPass123
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/MessageResponse
+              example:
+                message: Super admin created successfully
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/oauth/password-forgotten:
     get:
-      summary: Request password reset
+      summary: Request password reset email
       operationId: getpasswordforgottenroute
       tags:
         - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/password-forgotten \\\n  --request GET \\\n  --header 'Content-Type: application/json'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/password-forgotten \\\n  --request GET \\\n  --header 'Content-Type: application/json'"}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/MessageResponse
+              example:
+                message: Password reset email sent
         400:
           description: Bad request
           content:
@@ -231,19 +340,25 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/users/{id}:
+  /api/v1/oauth/admin/users/{id}:
     delete:
       summary: Delete user
       operationId: deleteadminremoveuserroute
       tags:
         - "Admin User Management"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/users/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/admin/users/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"JWTAuth":[]}
       responses:
         204:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/MessageResponse
+              example:
+                message: User deleted successfully
         400:
           description: Bad request
           content:
@@ -289,12 +404,27 @@ paths:
       tags:
         - "Admin User Management"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/users/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/admin/users/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"JWTAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/UserResponse
+              example:
+                id: user-001
+                username: user
+                email: user@example.com
+                firstName: John
+                lastName: Doe
+                enterpriseId: ent-123
+                organizationIds: []
+                roleIds: []
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
         400:
           description: Bad request
           content:
@@ -334,19 +464,42 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/users/{id}/status:
+  /api/v1/oauth/admin/users/{id}/status:
     put:
       summary: Update user status
       operationId: putadminupdatestatusroute
       tags:
         - "Admin User Management"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/users/{id}/status \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/admin/users/{id}/status \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"status\":\"inactive\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/UpdateUserStatusRequest
+            example:
+              status: inactive
       security:
         - {"JWTAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/UserResponse
+              example:
+                id: user-001
+                username: user
+                email: user@example.com
+                firstName: John
+                lastName: Doe
+                enterpriseId: ent-123
+                organizationIds: []
+                roleIds: []
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T10:00:00Z
         400:
           description: Bad request
           content:
@@ -386,19 +539,25 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/logout:
+  /api/v1/oauth/logout:
     get:
       summary: Logout user
       operationId: getlogoutroute
       tags:
         - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/logout \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/logout \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/MessageResponse
+              example:
+                message: Logout successful
         400:
           description: Bad request
           content:
@@ -438,17 +597,31 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/reset-password:
+  /api/v1/oauth/reset-password:
     post:
-      summary: Reset password with token
+      summary: Reset password with reset token
       operationId: postresetpasswordroute
       tags:
         - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/reset-password \\\n  --request POST \\\n  --header 'Content-Type: application/json'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/reset-password \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"password\":\"NewSecurePass123\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/ResetPasswordRequest
+            example:
+              password: NewSecurePass123
       responses:
         201:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/MessageResponse
+              example:
+                message: Password reset successfully
         400:
           description: Bad request
           content:
@@ -477,19 +650,25 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/is-email-verified:
+  /api/v1/oauth/is-email-verified:
     post:
       summary: Check if email is verified
       operationId: postisemailverifiedroute
       tags:
         - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/is-email-verified \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/is-email-verified \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
         201:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/VerificationStatusResponse
+              example:
+                verified: true
         400:
           description: Bad request
           content:
@@ -529,19 +708,27 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/users:
+  /api/v1/oauth/admin/users:
     get:
       summary: List all users
       operationId: getadminuserroute
       tags:
         - "Admin User Management"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/users \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/admin/users \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"JWTAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/UserListResponse
+              example:
+                users:
+                  - {"id":"user-001","username":"user","email":"user@example.com","firstName":"John","lastName":"Doe","enterpriseId":"ent-123","organizationIds":[],"roleIds":[],"createdAt":"2024-01-01T00:00:00Z","updatedAt":"2024-01-01T00:00:00Z"}
+                total: 1
         400:
           description: Bad request
           content:
@@ -581,19 +768,43 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/users/{id}/roles:
+  /api/v1/oauth/admin/users/{id}/roles:
     post:
       summary: Assign role to user
       operationId: postadminaddroleuserroute
       tags:
         - "Admin User Management"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/users/{id}/roles \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/admin/users/{id}/roles \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"roleId\":\"role-123\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/AssignRoleRequest
+            example:
+              roleId: role-123
       security:
         - {"JWTAuth":[]}
       responses:
         201:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/UserResponse
+              example:
+                id: user-001
+                username: user
+                email: user@example.com
+                firstName: John
+                lastName: Doe
+                enterpriseId: ent-123
+                organizationIds: []
+                roleIds:
+                  - "role-123"
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T10:00:00Z
         400:
           description: Bad request
           content:
@@ -633,14 +844,14 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/sign-in:
+  /api/v1/oauth/sign-in:
     post:
       summary: Authenticate user
       operationId: postloginroute
       tags:
         - "Authentication"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/sign-in \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"email\":\"user@example.com\",\"password\":\"password123\"}'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/oauth/sign-in \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"email\":\"user@example.com\",\"password\":\"password123\"}'"}
       requestBody:
         required: true
         content:
@@ -695,14 +906,14 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/delete/{id}:
+  /api/v1/company/delete/{id}:
     delete:
-      summary: Delete Enterprise
-      operationId: deleteenterpriseremoveroute
+      summary: Delete company by ID
+      operationId: deletecompanyremoveroute
       tags:
-        - "Enterprise"
+        - "Company"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/delete/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/company/delete/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
@@ -747,19 +958,53 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/find/id/{id}:
+  /api/v1/company/find/id/{id}:
     get:
-      summary: Get organization by ID
-      operationId: getorganizationsearchbyidroute
+      summary: Retrieve company by ID
+      operationId: getcompanysearchbyidroute
       tags:
-        - "Organization"
+        - "Company"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/find/id/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/company/find/id/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  taxId:
+                    type: string
+                  address:
+                    type: object
+                  contact:
+                    type: object
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                name: Acme Inc
+                taxId: TAX123456
+                address:
+                  street: 123 Main St
+                  city: Quito
+                  state: Pichincha
+                  postalCode: 170150
+                  country: Ecuador
+                contact:
+                  phone: +593999999999
+                  email: contact@acme.com
+                  contactPerson: John Doe
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
         400:
           description: Bad request
           content:
@@ -799,19 +1044,112 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/create:
+  /api/v1/company/create:
     post:
-      summary: Create enterprise
-      operationId: postenterprisecreateroute
+      summary: Create a new company
+      operationId: postcompanycreateroute
       tags:
-        - "Enterprise"
+        - "Company"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/create \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/company/create \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"name\":\"Acme Inc\",\"taxId\":\"TAX123456\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Quito\",\"state\":\"Pichincha\",\"postalCode\":\"170150\",\"country\":\"Ecuador\"},\"contact\":{\"phone\":\"+593999999999\",\"email\":\"contact@acme.com\",\"contactPerson\":\"John Doe\"},\"createdAt\":\"2024-01-01T00:00:00Z\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                taxId:
+                  type: string
+                address:
+                  type: object
+                  properties:
+                    street:
+                      type: string
+                    city:
+                      type: string
+                    state:
+                      type: string
+                    postalCode:
+                      type: string
+                    country:
+                      type: string
+                contact:
+                  type: object
+                  properties:
+                    phone:
+                      type: string
+                    email:
+                      type: string
+                    contactPerson:
+                      type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+              required:
+                - "name"
+                - "taxId"
+                - "address"
+                - "contact"
+                - "createdAt"
+            example:
+              name: Acme Inc
+              taxId: TAX123456
+              address:
+                street: 123 Main St
+                city: Quito
+                state: Pichincha
+                postalCode: 170150
+                country: Ecuador
+              contact:
+                phone: +593999999999
+                email: contact@acme.com
+                contactPerson: John Doe
+              createdAt: 2024-01-01T00:00:00Z
       security:
         - {"SessionAuth":[]}
       responses:
         201:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  taxId:
+                    type: string
+                  address:
+                    type: object
+                  contact:
+                    type: object
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                name: Acme Inc
+                taxId: TAX123456
+                address:
+                  street: 123 Main St
+                  city: Quito
+                  state: Pichincha
+                  postalCode: 170150
+                  country: Ecuador
+                contact:
+                  phone: +593999999999
+                  email: contact@acme.com
+                  contactPerson: John Doe
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
         400:
           description: Bad request
           content:
@@ -851,19 +1189,53 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/find/tax-id/{taxId}:
+  /api/v1/company/find/tax-id/{taxId}:
     get:
-      summary: Get company by tax ID
+      summary: Retrieve company by tax ID
       operationId: getcompanysearchbytaxidroute
       tags:
         - "Company"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/find/tax-id/{taxId} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/company/find/tax-id/{taxId} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  taxId:
+                    type: string
+                  address:
+                    type: object
+                  contact:
+                    type: object
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                name: Acme Inc
+                taxId: TAX123456
+                address:
+                  street: 123 Main St
+                  city: Quito
+                  state: Pichincha
+                  postalCode: 170150
+                  country: Ecuador
+                contact:
+                  phone: +593999999999
+                  email: contact@acme.com
+                  contactPerson: John Doe
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
         400:
           description: Bad request
           content:
@@ -903,19 +1275,53 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/find/industry/{id}:
+  /api/v1/company/find/industry/{id}:
     get:
-      summary: Get company by Industry
+      summary: Retrieve companies by industry
       operationId: getcompanysearchbyindustry
       tags:
         - "Company"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/find/industry/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/company/find/industry/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  taxId:
+                    type: string
+                  address:
+                    type: object
+                  contact:
+                    type: object
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                name: Acme Inc
+                taxId: TAX123456
+                address:
+                  street: 123 Main St
+                  city: Quito
+                  state: Pichincha
+                  postalCode: 170150
+                  country: Ecuador
+                contact:
+                  phone: +593999999999
+                  email: contact@acme.com
+                  contactPerson: John Doe
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
         400:
           description: Bad request
           content:
@@ -955,19 +1361,41 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/update/{id}/industry:
+  /api/v1/company/update/{id}/industry:
     put:
-      summary: Update company by ID
+      summary: Update company industry
       operationId: putcompanyupdateindustryroute
       tags:
         - "Company"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/update/{id}/industry \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/company/update/{id}/industry \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"industry\":\"Finance\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                industry:
+                  type: string
+              required:
+                - "industry"
+            example:
+              industry: Finance
       security:
         - {"SessionAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: Company industry updated successfully
         400:
           description: Bad request
           content:
@@ -1007,19 +1435,105 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/find/code/{code}:
+  /api/v1/org/create:
+    post:
+      summary: Create a new organization
+      operationId: postorganizationcreateroute
+      tags:
+        - "Organization"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/org/create \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"name\":\"Engineering Dept\",\"code\":\"ENG-001\",\"enterpriseId\":\"ent-123\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/CreateOrganizationRequest
+            example:
+              name: Engineering Dept
+              code: ENG-001
+              enterpriseId: ent-123
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/OrganizationResponse
+              example:
+                id: org-001
+                name: Engineering Dept
+                code: ENG-001
+                status: active
+                enterpriseId: ent-123
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/org/find/code/{code}:
     get:
-      summary: Get organization by code
+      summary: Retrieve organization by code
       operationId: getorganizationsearchbycoderoute
       tags:
         - "Organization"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/find/code/{code} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/org/find/code/{code} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
       security:
         - {"SessionAuth":[]}
       responses:
         200:
-          description: Successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/OrganizationResponse
+              example:
+                id: org-001
+                name: Engineering Dept
+                code: ENG-001
+                status: active
+                enterpriseId: ent-123
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
         400:
           description: Bad request
           content:
@@ -1059,175 +1573,565 @@ paths:
             application/json:
               schema:
                 $ref: #/components/schemas/ErrorResponse
-  /api/v1/update/{id}/status:
+  /api/v1/org/update/{id}/status:
+    put:
+      summary: Update organization status
+      operationId: putorganizationupdatestatusroute
+      tags:
+        - "Organization"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/org/update/{id}/status \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"status\":\"inactive\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/UpdateOrganizationStatusRequest
+            example:
+              status: inactive
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/OrganizationResponse
+              example:
+                id: org-001
+                name: Engineering Dept
+                code: ENG-001
+                status: inactive
+                enterpriseId: ent-123
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T10:00:00Z
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/org/delete/{id}:
+    delete:
+      summary: Delete organization by ID
+      operationId: deleteorganizationremoveroute
+      tags:
+        - "Organization"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/org/delete/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        204:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/DeleteMessageResponse
+              example:
+                message: Organization deleted successfully
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/org/find/id/{id}:
+    get:
+      summary: Retrieve organization by ID
+      operationId: getorganizationsearchbyidroute
+      tags:
+        - "Organization"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/org/find/id/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/OrganizationResponse
+              example:
+                id: org-001
+                name: Engineering Dept
+                code: ENG-001
+                status: active
+                enterpriseId: ent-123
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/enterprise/find/subdomain/{subdomain}:
+    get:
+      summary: Retrieve enterprise by subdomain
+      operationId: getenterprisesearchbysubdomainroute
+      tags:
+        - "Enterprise"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/enterprise/find/subdomain/{subdomain} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/EnterpriseResponse
+              example:
+                id: ent-001
+                name: Tech Corp
+                subdomain: techcorp
+                status: active
+                plan: professional
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/enterprise/find/{id}:
+    get:
+      summary: Retrieve enterprise by ID
+      operationId: getenterprisesearchbyidroute
+      tags:
+        - "Enterprise"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/enterprise/find/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/EnterpriseResponse
+              example:
+                id: ent-001
+                name: Tech Corp
+                subdomain: techcorp
+                status: active
+                plan: professional
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/enterprise/create:
+    post:
+      summary: Create a new enterprise
+      operationId: postenterprisecreateroute
+      tags:
+        - "Enterprise"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/enterprise/create \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"name\":\"Tech Corp\",\"subdomain\":\"techcorp\",\"plan\":\"professional\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/CreateEnterpriseRequest
+            example:
+              name: Tech Corp
+              subdomain: techcorp
+              plan: professional
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/EnterpriseResponse
+              example:
+                id: ent-001
+                name: Tech Corp
+                subdomain: techcorp
+                status: active
+                plan: professional
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T00:00:00Z
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/enterprise/update/{id}/plan:
+    put:
+      summary: Update enterprise subscription plan
+      operationId: putenterpriseupdateplanroute
+      tags:
+        - "Enterprise"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/enterprise/update/{id}/plan \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"plan\":\"enterprise\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/UpdateEnterprisePlanRequest
+            example:
+              plan: enterprise
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/EnterpriseResponse
+              example:
+                id: ent-001
+                name: Tech Corp
+                subdomain: techcorp
+                status: active
+                plan: enterprise
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T10:00:00Z
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/enterprise/delete/{id}:
+    delete:
+      summary: Delete enterprise by ID
+      operationId: deleteenterpriseremoveroute
+      tags:
+        - "Enterprise"
+      x-code-samples:
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/enterprise/delete/{id} \\\n  --request DELETE \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'"}
+      security:
+        - {"SessionAuth":[]}
+      responses:
+        204:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/DeleteMessageResponse
+              example:
+                message: Enterprise deleted successfully
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+              example:
+                errors:
+                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
+                meta: {}
+                clerk_trace_id: trace_12345
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: #/components/schemas/ErrorResponse
+  /api/v1/enterprise/update/{id}/status:
     put:
       summary: Update enterprise status
       operationId: putenterpriseupdatestatusroute
       tags:
         - "Enterprise"
       x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/update/{id}/status \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
+        - {"lang":"curl","source":"curl https://api.kuaipiao.com/api/v1/enterprise/update/{id}/status \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  --data '{\"status\":\"suspended\"}'"}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: #/components/schemas/UpdateEnterpriseStatusRequest
+            example:
+              status: suspended
       security:
         - {"SessionAuth":[]}
       responses:
         200:
-          description: Successful operation
-        400:
-          description: Bad request
+          description: Success
           content:
             application/json:
               schema:
-                $ref: #/components/schemas/ErrorResponse
+                $ref: #/components/schemas/EnterpriseResponse
               example:
-                errors:
-                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        422:
-          description: Unprocessable entity
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-  /api/v1/find/subdomain/{subdomain}:
-    get:
-      summary: Get enterprise by domain
-      operationId: getenterprisesearchbysubdomainroute
-      tags:
-        - "Enterprise"
-      x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/find/subdomain/{subdomain} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
-      security:
-        - {"SessionAuth":[]}
-      responses:
-        200:
-          description: Successful operation
-        400:
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        422:
-          description: Unprocessable entity
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-  /api/v1/find/{id}:
-    get:
-      summary: Get enterprise by ID
-      operationId: getenterprisesearchbyidroute
-      tags:
-        - "Enterprise"
-      x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/find/{id} \\\n  --request GET \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
-      security:
-        - {"SessionAuth":[]}
-      responses:
-        200:
-          description: Successful operation
-        400:
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Invalid request parameters","long_message":"The request contains invalid or missing parameters","code":"validation_error","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Authentication required","long_message":"Valid authentication credentials are required","code":"authentication_required","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        422:
-          description: Unprocessable entity
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-              example:
-                errors:
-                  - {"message":"Validation failed","long_message":"The provided data failed validation checks","code":"validation_failed","meta":{}}
-                meta: {}
-                clerk_trace_id: trace_12345
-        500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: #/components/schemas/ErrorResponse
-  /api/v1/update/{id}/plan:
-    put:
-      summary: Update enterprise plan
-      operationId: putenterpriseupdateplanroute
-      tags:
-        - "Enterprise"
-      x-code-samples:
-        - {"lang":"curl","source":"curl https://api.xiaotianqi.com/api/v1/update/{id}/plan \\\n  --request PUT \\\n  --header 'Content-Type: application/json' \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'"}
-      security:
-        - {"SessionAuth":[]}
-      responses:
-        200:
-          description: Successful operation
+                id: ent-001
+                name: Tech Corp
+                subdomain: techcorp
+                status: suspended
+                plan: professional
+                createdAt: 2024-01-01T00:00:00Z
+                updatedAt: 2024-01-01T10:00:00Z
         400:
           description: Bad request
           content:
@@ -1371,3 +2275,72 @@ components:
         - "lastName"
         - "email"
         - "password"
+    CompanyResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        taxId:
+          type: string
+        industry:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - "id"
+        - "name"
+        - "taxId"
+    OrganizationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        status:
+          type: string
+        enterpriseId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - "id"
+        - "name"
+        - "code"
+        - "status"
+    EnterpriseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        subdomain:
+          type: string
+        status:
+          type: string
+        plan:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - "id"
+        - "name"
+        - "subdomain"
+        - "status"

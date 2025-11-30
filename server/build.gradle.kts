@@ -81,7 +81,3 @@ tasks.register<JavaExec>("generateOpenApiSpecFile") {
     standardOutput = System.out
     errorOutput = System.err
 }
-
-tasks.named("buildOpenApi") {
-    finalizedBy("generateOpenApiSpecFile")
-}

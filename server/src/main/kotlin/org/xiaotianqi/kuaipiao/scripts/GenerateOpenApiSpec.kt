@@ -45,6 +45,21 @@ fun generateOpenApiFromClassPath() {
         "org.xiaotianqi.kuaipiao.api.routing.v1.enterprise"
     )
 
+    // Mapa de prefijos por clase
+    val classPrefixes = mutableMapOf<String, String>()
+
+    // Primero, extraer todos los prefijos de los archivos fuente
+    resourcePackages.forEach { packageName ->
+        val routeFiles = findSourceRouteFiles(packageName)
+        routeFiles.forEach { file ->
+            val prefixes = extractAllRoutePrefixes(file)
+            prefixes.forEach { (className, prefix) ->
+                classPrefixes[className] = prefix
+                println("  🔍 Encontrado prefijo para $className: $prefix")
+            }
+        }
+    }
+
     resourcePackages.forEach { packageName ->
         findClassesInPackage(packageName).forEach { clazz ->
             try {
@@ -53,7 +68,9 @@ fun generateOpenApiFromClassPath() {
                 val apiRoute = kClass.findAnnotation<ApiRoute>()
 
                 if (resourceAnnotation != null && apiRoute != null) {
-                    val fullPath = basePath + resourceAnnotation.path
+                    // Obtener el prefijo de la clase
+                    val prefix = classPrefixes[clazz.simpleName] ?: ""
+                    val fullPath = basePath + prefix + resourceAnnotation.path
                     val method = apiRoute.method.lowercase()
                     val summary = apiRoute.summary
                     val tag = apiRoute.tag
@@ -71,7 +88,6 @@ fun generateOpenApiFromClassPath() {
                         put("operationId", "${method}${clazz.simpleName}".lowercase())
                         putJsonArray("tags") { add(tag) }
 
-                        // Curl examples
                         putJsonArray("x-code-samples") {
                             addJsonObject {
                                 put("lang", "curl")
@@ -79,7 +95,6 @@ fun generateOpenApiFromClassPath() {
                             }
                         }
 
-                        // Request body
                         if (requestSchema.isNotEmpty() && method in listOf("post", "put", "patch")) {
                             putJsonObject("requestBody") {
                                 put("required", true)
@@ -107,7 +122,6 @@ fun generateOpenApiFromClassPath() {
                         }
 
                         putJsonObject("responses") {
-                            // Success response
                             if (responseSchema.isNotEmpty()) {
                                 val statusCode = when (method) {
                                     "post" -> "201"
@@ -142,7 +156,6 @@ fun generateOpenApiFromClassPath() {
                                 }
                             }
 
-                            // Standard error responses
                             putJsonObject("400") {
                                 put("description", "Bad request")
                                 putJsonObject("content") {
@@ -251,16 +264,21 @@ fun generateOpenApiFromClassPath() {
         putJsonObject("info") {
             put("title", "KuaiPiao OpenAPI")
             put("version", "1.0.0")
-            put("description", "Auto-generated from @ApiRoute annotations")
+            put("description", "Comprehensive API documentation for KuaiPiao - Invoice Processing & Management Platform")
             putJsonObject("contact") {
                 put("name", "KuaiPiao Support")
-                put("email", "contact@xiaotianqi.com")
+                put("url", "https://kuaipiao.com")
+                put("email", "support@kuaipiao.com")
+            }
+            putJsonObject("license") {
+                put("name", "Apache 2.0")
+                put("url", "https://www.apache.org/licenses/LICENSE-2.0.html")
             }
         }
 
         putJsonArray("servers") {
-            addJsonObject { put("url", "http://localhost:8080"); put("description", "Dev") }
-            addJsonObject { put("url", "https://api.xiaotianqi.com"); put("description", "Prod") }
+            addJsonObject { put("url", "http://localhost:8080"); put("description", "Development") }
+            addJsonObject { put("url", "https://api.kuaipiao.com"); put("description", "Production") }
         }
 
         put("paths", paths)
@@ -319,7 +337,6 @@ fun generateOpenApiFromClassPath() {
                     putJsonArray("required") { add("message"); add("code") }
                 }
 
-                // Domain schemas
                 putJsonObject("UserResponse") {
                     put("type", "object")
                     putJsonObject("properties") {
@@ -340,9 +357,7 @@ fun generateOpenApiFromClassPath() {
                         putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
                         putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
                     }
-                    putJsonArray("required") {
-                        add("id"); add("email"); add("firstName"); add("lastName")
-                    }
+                    putJsonArray("required") { add("id"); add("email"); add("firstName"); add("lastName") }
                 }
 
                 putJsonObject("LoginCredentials") {
@@ -365,6 +380,47 @@ fun generateOpenApiFromClassPath() {
                     }
                     putJsonArray("required") { add("firstName"); add("lastName"); add("email"); add("password") }
                 }
+
+                putJsonObject("CompanyResponse") {
+                    put("type", "object")
+                    putJsonObject("properties") {
+                        putJsonObject("id") { put("type", "string") }
+                        putJsonObject("name") { put("type", "string") }
+                        putJsonObject("taxId") { put("type", "string") }
+                        putJsonObject("industry") { put("type", "string") }
+                        putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
+                        putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
+                    }
+                    putJsonArray("required") { add("id"); add("name"); add("taxId") }
+                }
+
+                putJsonObject("OrganizationResponse") {
+                    put("type", "object")
+                    putJsonObject("properties") {
+                        putJsonObject("id") { put("type", "string") }
+                        putJsonObject("name") { put("type", "string") }
+                        putJsonObject("code") { put("type", "string") }
+                        putJsonObject("status") { put("type", "string") }
+                        putJsonObject("enterpriseId") { put("type", "string") }
+                        putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
+                        putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
+                    }
+                    putJsonArray("required") { add("id"); add("name"); add("code"); add("status") }
+                }
+
+                putJsonObject("EnterpriseResponse") {
+                    put("type", "object")
+                    putJsonObject("properties") {
+                        putJsonObject("id") { put("type", "string") }
+                        putJsonObject("name") { put("type", "string") }
+                        putJsonObject("subdomain") { put("type", "string") }
+                        putJsonObject("status") { put("type", "string") }
+                        putJsonObject("plan") { put("type", "string") }
+                        putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
+                        putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
+                    }
+                    putJsonArray("required") { add("id"); add("name"); add("subdomain"); add("status") }
+                }
             }
         }
     }
@@ -379,14 +435,65 @@ fun generateOpenApiFromClassPath() {
     println("✅ api.yaml: ${outputDir.absolutePath}/api.yaml")
 }
 
+fun findSourceRouteFiles(packageName: String): List<File> {
+    val files = mutableListOf<File>()
+    val srcPath = "src/main/kotlin/${packageName.replace(".", "/")}"
+    val srcDir = File(srcPath)
+
+    if (srcDir.exists() && srcDir.isDirectory) {
+        srcDir.walk().forEach { f ->
+            if (f.isFile && f.name.endsWith("Routes.kt")) {
+                files.add(f)
+            }
+        }
+    }
+
+    return files
+}
+
+fun extractAllRoutePrefixes(file: File): Map<String, String> {
+    val prefixes = mutableMapOf<String, String>()
+    val content = file.readText()
+
+    val classRegex = """(?:class|data class)\s+(\w+)""".toRegex()
+    val routeCallRegex = """route\s*\(\s*"([^"]+)"\s*\)\s*\{""".toRegex()
+
+    val routeMatch = routeCallRegex.find(content)
+    val routePrefix = routeMatch?.groupValues?.get(1) ?: ""
+
+    val lines = content.split("\n")
+    var inApiRoute = false
+
+    for (i in lines.indices) {
+        val line = lines[i]
+
+        if (line.contains("@ApiRoute")) {
+            inApiRoute = true
+        }
+
+        if (inApiRoute && (line.contains("class ") || line.contains("data class "))) {
+            val classMatch = classRegex.find(line)
+            if (classMatch != null) {
+                val currentClass = classMatch.groupValues[1]
+                if (routePrefix.isNotEmpty()) {
+                    prefixes[currentClass] = routePrefix
+                }
+                inApiRoute = false
+            }
+        }
+    }
+
+    return prefixes
+}
+
 fun buildCurlExample(path: String, method: String, exampleRequest: String, requiresAuth: Boolean): String {
     return buildString {
-        append("curl https://api.xiaotianqi.com$path")
+        append("curl https://api.kuaipiao.com$path")
         append(" \\\n  --request ${method.uppercase()}")
         append(" \\\n  --header 'Content-Type: application/json'")
 
         if (requiresAuth) {
-            append(" \\\n  --header 'Authorization: Bearer YOUR_SECRET_TOKEN'")
+            append(" \\\n  --header 'Authorization: Bearer YOUR_JWT_TOKEN'")
         }
 
         if (exampleRequest.isNotEmpty() && method in listOf("post", "put", "patch")) {
