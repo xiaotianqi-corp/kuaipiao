@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    email_verified BOOLEAN NOT NULL,
+    email_verified BOOLEAN DEFAULT FALSE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     enterprise_id uuid NULL,
     is_active BOOLEAN DEFAULT TRUE NOT NULL,
@@ -41,3 +41,12 @@ CREATE TABLE IF NOT EXISTS emailverification (
 ALTER TABLE emailverification ADD CONSTRAINT emailverification_token_unique UNIQUE (token);
 
 CREATE INDEX emailverification_id_user ON emailverification (id_user);
+
+CREATE TABLE IF NOT EXISTS user_organizations (
+    user_id uuid,
+    organization_id uuid,
+    CONSTRAINT pk_user_organizations PRIMARY KEY (user_id,
+    organization_id),
+    CONSTRAINT fk_user_organizations_user_id__id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_organizations_organization_id__id FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE RESTRICT
+);

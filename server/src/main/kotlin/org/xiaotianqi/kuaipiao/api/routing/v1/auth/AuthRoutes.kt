@@ -19,7 +19,29 @@ import kotlin.time.ExperimentalTime
     tag = "Authentication",
     requestSchema = "RegistrationCredentials",
     responseSchema = "VerificationMessageResponse",
-    exampleRequest = """{"firstName":"John","lastName":"Doe","email":"john@example.com","password":"SecurePass123"}""",
+    exampleRequest = """
+        {
+          "firstName": "John",
+          "lastName": "Doe",
+          "email": "john@example.com",
+          "password": "SecurePass123",
+          "organization": {
+            "id": "org-12345",
+            "userIds": [],
+            "name": "Acme Corp",
+            "code": "ACME001",
+            "address": "123 Main St",
+            "phone": "+1-555-1234",
+            "email": "contact@acme.com",
+            "country": "USA",
+            "city": "New York",
+            "metadata": null,
+            "status": "ACTIVE",
+            "createdAt": "2024-01-01T00:00:00Z",
+            "updatedAt": null
+          }
+        }
+    """,
     exampleResponse = """{"message":"Verification email sent"}"""
 )
 class RegisterRoute

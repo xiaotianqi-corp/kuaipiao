@@ -25,7 +25,7 @@ object UsersTable : UUIDTable("users") {
     val firstName = varchar("first_name", 100)
     val lastName = varchar("last_name", 100)
     val email = varchar("email", 255).uniqueIndex()
-    val emailVerified = bool("email_verified")
+    val emailVerified = bool("email_verified").default(false)
     val passwordHash = varchar("password_hash", 255)
     val enterprise = reference("enterprise_id", EnterprisesTable).nullable()
     val isActive = bool("is_active").default(true)
@@ -56,7 +56,6 @@ class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var organizations by OrganizationEntity via UserOrganizationsTable
     var roles by RoleEntity via UserRolesTable
 }
-
 
 @ExperimentalTime
 fun UserEntity.fromData(

@@ -7,18 +7,15 @@ import org.xiaotianqi.kuaipiao.data.daos.auth.EmailVerificationDao
 import org.xiaotianqi.kuaipiao.domain.auth.UserData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.xiaotianqi.kuaipiao.config.ResendConfig
-import org.xiaotianqi.kuaipiao.core.clients.ResendClient
 import org.xiaotianqi.kuaipiao.domain.email.EmailVerificationData
-import org.xiaotianqi.kuaipiao.domain.email.ResendEmailRequest
 import kotlin.time.ExperimentalTime
 
 
 @ExperimentalTime
-object EmailVerificationUseCase : KoinComponent {
+object EmailVerificationUseCaseLast : KoinComponent {
     private val emailVerificationDao by inject<EmailVerificationDao>()
     private val tokenGenerator by inject<TokenGenerator>()
-    private val resendClient = inject<ResendClient>()
+    private val brevoClient by inject<BrevoClient>()
 
     /**
      * Sends a verification email to the provided email
@@ -29,19 +26,19 @@ object EmailVerificationUseCase : KoinComponent {
     suspend fun createAndSend(user: UserData): Boolean {
         val (token, hashedToken) = tokenGenerator.generate()
 
-        val emailRequest = ResendEmailRequest(
-            from = ResendConfig.getFromAddress(),
-            to = listOf(user.email),
-            subject = "Verify your email address",
-            html = buildVerificationEmailHtml(token, user.email),
+        val emailVerificationData = EmailVerificationData(
+            token = hashedToken,
+            userId = user.id,
+            expireAt = DatetimeUtils.currentMillis() + 3600000,
+            createdAt = DatetimeUtils.currentMillis(),
         )
 
-        val emailId = resendClient.sendEmail(emailRequest)
+        val sent = brevoClient.sendEmailVerificationEmail(user.email, token)
 
-        if (emailId != null) {
+        if (sent) {
             emailVerificationDao.create(emailVerificationData)
-            return true
         }
-        return false
+
+        return sent
     }
 }

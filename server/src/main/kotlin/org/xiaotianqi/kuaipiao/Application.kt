@@ -16,6 +16,7 @@ import org.xiaotianqi.kuaipiao.api.plugins.configureValidator
 import org.xiaotianqi.kuaipiao.api.routing.configureRouting
 import org.xiaotianqi.kuaipiao.config.ApiConfig
 import org.xiaotianqi.kuaipiao.config.ApplicationConfig
+import org.xiaotianqi.kuaipiao.config.DatabaseModule
 import org.xiaotianqi.kuaipiao.config.core.ConfigurationManager
 import org.xiaotianqi.kuaipiao.config.core.ConfigurationReader
 import kotlin.time.ExperimentalTime
@@ -53,6 +54,9 @@ fun main() {
 
 @ExperimentalTime
 fun Application.module(testing: Boolean = false) {
+    if (!testing) {
+        DatabaseModule.initialize()
+    }
     install(AuthorizationPlugin)
     configureOpenAPI()
     configureDI()

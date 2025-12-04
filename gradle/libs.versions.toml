@@ -15,7 +15,7 @@ androidx-testExt = "1.3.0"
 
 # Compose and UI
 composeMultiplatform = "1.9.3"
-composeHotReload = "1.0.0-rc04"
+composeHotReload = "1.0.0"
 
 # Testing
 junit = "4.13.2"
@@ -24,14 +24,14 @@ testcontainers = "1.21.3"
 
 # Core Technologies
 kotlin = "2.2.20"
-ktor = "3.3.2"
+ktor = "3.3.3"
 logback = "1.5.21"
 koin = "4.1.1"
 koin-annotations = "2.3.1"
 slf4j = "2.0.17"
 koin-ksp = "2.3.1"
 classgraph = "4.8.184"
-poi = "5.5.0"
+poi = "5.5.1"
 
 # Kotlin Extensions
 kotlinx-serialization = "1.9.0"
@@ -60,7 +60,7 @@ bcrypt = "0.4"
 hikari = "7.0.2"
 postgres = "42.7.8"
 exposed = "0.61.0"
-flyway = "11.17.0"
+flyway = "11.18.0"
 h2 = "2.4.240"
 kafka = "2.2.1"
 
@@ -82,7 +82,7 @@ resilience4j = "2.3.0"
 
 # XML Processing
 xml = "0.91.3"
-xades4j = "1.82"
+xades4j = "1.83"
 jaxb-api = "2.3.1"
 santuario = "4.0.4"
 encoder = "1.4.0"
@@ -94,6 +94,9 @@ firebase-admin = "9.3.0"
 
 # Ai
 koog = "0.5.3"
+
+# Marketing & Notification
+resend-email = "4.11.0"
 
 # ENV
 dotenv = "6.5.1"
@@ -242,8 +245,11 @@ jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-api" }
 santuario = { module = "org.apache.santuario:xmlsec", version.ref = "santuario" }
 encoder = { module = "org.owasp.encoder:encoder", version.ref = "encoder" }
 
-# --- Ai Agents---
+# --- Ai Agents ---
 ai-koog = { module = "ai.koog:koog-agents", version.ref = "koog"}
+
+# --- Marketing & Notification ---
+resend = { module = "com.resend:resend-java", version.ref = "resend-email" }
 
 # --- Testing Libraries ---
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -464,6 +470,13 @@ ai = [
 ]
 
 # --------------------------------------------
+# Marketing & Notification
+# --------------------------------------------
+notification = [
+    "resend"
+]
+
+# --------------------------------------------
 # Calendar / Recurrence Utilities
 # --------------------------------------------
 calendar = [
@@ -484,6 +497,7 @@ testing = [
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidKmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }

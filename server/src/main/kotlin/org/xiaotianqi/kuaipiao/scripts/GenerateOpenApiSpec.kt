@@ -32,6 +32,8 @@ fun main() {
     generateOpenApiFromClassPath()
 }
 
+private val json = Json { prettyPrint = true }
+
 fun generateOpenApiFromClassPath() {
     println("📄 Scanning classpath for @Resource classes...")
 
@@ -428,7 +430,7 @@ fun generateOpenApiFromClassPath() {
     val outputDir = File("src/main/resources")
     outputDir.mkdirs()
 
-    File(outputDir, "api.json").writeText(Json { prettyPrint = true }.encodeToString(spec))
+    File(outputDir, "api.json").writeText(json.encodeToString(spec))
     println("\n✅ api.json: ${outputDir.absolutePath}/api.json")
 
     File(outputDir, "api.yaml").writeText(convertToYaml(spec))
@@ -549,7 +551,6 @@ fun convertToYaml(element: JsonElement, indent: Int = 0): String {
             }
         }
         is JsonPrimitive -> element.toString().trim('"')
-        else -> element.toString()
     }
 }
 

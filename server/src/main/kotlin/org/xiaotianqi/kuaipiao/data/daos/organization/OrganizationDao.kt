@@ -7,6 +7,7 @@ import org.xiaotianqi.kuaipiao.data.sources.db.dbi.organization.OrganizationDBI
 import org.xiaotianqi.kuaipiao.domain.organization.OrganizationCreateData
 import org.xiaotianqi.kuaipiao.domain.organization.OrganizationData
 import org.xiaotianqi.kuaipiao.enums.EntityStatus
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UserEntity
 import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
@@ -15,8 +16,8 @@ class OrganizationDao(
     private val organizationDBI: OrganizationDBI,
 ) {
 
-    suspend fun create(data: OrganizationCreateData): OrganizationData {
-        val entity = organizationDBI.create(data)
+    suspend fun create(data: OrganizationCreateData, userEntities: List<UserEntity> = emptyList()): OrganizationData {
+        val entity = organizationDBI.create(data, userEntities)
         return entity.toDomain()
     }
 

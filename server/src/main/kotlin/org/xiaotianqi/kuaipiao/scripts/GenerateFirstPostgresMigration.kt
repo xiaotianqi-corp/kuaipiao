@@ -14,6 +14,11 @@ import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.EmailVerificationTab
 import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.PasswordResetTable
 import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UsersTable
 import org.xiaotianqi.kuaipiao.data.sources.db.schemas.enterprise.EnterprisesTable
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.rbac.PermissionsTable
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.rbac.RolePermissionsTable
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.rbac.RolesTable
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.rbac.UserRolesTable
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UserOrganizationsTable
 import org.xiaotianqi.kuaipiao.scripts.core.createMigrationsFolderIfNotExisting
 import org.xiaotianqi.kuaipiao.scripts.core.formatSql
 import java.io.File
@@ -46,6 +51,13 @@ fun main() {
             UsersTable,
             PasswordResetTable,
             EmailVerificationTable,
+            UserOrganizationsTable,
+        ),
+        "rbac_table" to listOf(
+            RolesTable,
+            PermissionsTable,
+            RolePermissionsTable,
+            UserRolesTable,
         )
     )
 
@@ -61,7 +73,9 @@ fun main() {
 
         val filteredStatements = statements.filterNot { sql ->
             (moduleName != "enterprise_table" && sql.contains("CREATE TABLE IF NOT EXISTS enterprises")) ||
-            (moduleName == "user_table" && sql.contains("CREATE TABLE IF NOT EXISTS organizations"))
+            (moduleName == "user_table" && sql.contains("CREATE TABLE IF NOT EXISTS organizations")) ||
+            (moduleName == "rbac_table" && sql.contains("CREATE TABLE IF NOT EXISTS users"))||
+            (moduleName != "user_table" && sql.contains("ALTER TABLE users", ignoreCase = true))
         }
 
         val formattedSql = formatSql(filteredStatements.joinToString("\n\n") { "$it;" })

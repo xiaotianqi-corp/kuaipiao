@@ -21,7 +21,7 @@ import kotlin.time.toKotlinInstant
 
 object OrganizationsTable : UUIDTable("organizations") {
     val name = varchar("name", 150)
-    val code = varchar("code", 50).uniqueIndex()
+    val code = varchar("code", 50)
     val address = varchar("address", 250)
     val phone = varchar("phone", 150)
     val email = varchar("email", 150)

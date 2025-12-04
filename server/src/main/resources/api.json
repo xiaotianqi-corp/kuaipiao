@@ -35,7 +35,7 @@
                 "x-code-samples": [
                     {
                         "lang": "curl",
-                        "source": "curl https://api.kuaipiao.com/api/v1/oauth/sign-up \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john@example.com\",\"password\":\"SecurePass123\"}'"
+                        "source": "curl https://api.kuaipiao.com/api/v1/oauth/sign-up \\\n  --request POST \\\n  --header 'Content-Type: application/json' \\\n  --data '\n        {\n          \"firstName\": \"John\",\n          \"lastName\": \"Doe\",\n          \"email\": \"john@example.com\",\n          \"password\": \"SecurePass123\",\n          \"organization\": {\n            \"id\": \"org-12345\",\n            \"userIds\": [],\n            \"name\": \"Acme Corp\",\n            \"code\": \"ACME001\",\n            \"address\": \"123 Main St\",\n            \"phone\": \"+1-555-1234\",\n            \"email\": \"contact@acme.com\",\n            \"country\": \"USA\",\n            \"city\": \"New York\",\n            \"metadata\": null,\n            \"status\": \"ACTIVE\",\n            \"createdAt\": \"2024-01-01T00:00:00Z\",\n            \"updatedAt\": null\n          }\n        }\n    '"
                     }
                 ],
                 "requestBody": {
@@ -49,7 +49,22 @@
                                 "firstName": "John",
                                 "lastName": "Doe",
                                 "email": "john@example.com",
-                                "password": "SecurePass123"
+                                "password": "SecurePass123",
+                                "organization": {
+                                    "id": "org-12345",
+                                    "userIds": [],
+                                    "name": "Acme Corp",
+                                    "code": "ACME001",
+                                    "address": "123 Main St",
+                                    "phone": "+1-555-1234",
+                                    "email": "contact@acme.com",
+                                    "country": "USA",
+                                    "city": "New York",
+                                    "metadata": null,
+                                    "status": "ACTIVE",
+                                    "createdAt": "2024-01-01T00:00:00Z",
+                                    "updatedAt": null
+                                }
                             }
                         }
                     }

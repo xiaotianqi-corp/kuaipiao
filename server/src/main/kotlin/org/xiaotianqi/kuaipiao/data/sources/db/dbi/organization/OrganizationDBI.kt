@@ -7,12 +7,13 @@ import org.xiaotianqi.kuaipiao.data.sources.db.schemas.organization.Organization
 import org.xiaotianqi.kuaipiao.domain.organization.OrganizationCreateData
 import org.xiaotianqi.kuaipiao.domain.organization.OrganizationData
 import org.xiaotianqi.kuaipiao.enums.EntityStatus
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UserEntity
 import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
 @ExperimentalTime
 interface OrganizationDBI : DBI {
-    suspend fun create(data: OrganizationCreateData): OrganizationEntity
+    suspend fun create(data: OrganizationCreateData, userEntities: List<UserEntity> = emptyList()): OrganizationEntity
     suspend fun get(id: DtId<OrganizationData>): OrganizationEntity?
     suspend fun getByCode(code: String): OrganizationEntity?
     suspend fun updateStatus(id: DtId<OrganizationData>, status: EntityStatus)

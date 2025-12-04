@@ -12,5 +12,3 @@ CREATE TABLE IF NOT EXISTS organizations (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL
 );
-
-ALTER TABLE organizations ADD CONSTRAINT organizations_code_unique UNIQUE (code);

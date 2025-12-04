@@ -6,7 +6,9 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 import org.xiaotianqi.kuaipiao.validation.Validatable
 import org.xiaotianqi.kuaipiao.domain.password.PasswordResetRequest
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 fun Application.configureValidator() {
     install(RequestValidation) {
         validateValidatable<RegistrationCredentials>()

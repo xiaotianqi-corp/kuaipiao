@@ -2,11 +2,12 @@ package org.xiaotianqi.kuaipiao.data.daos.user
 
 import kotlinx.serialization.Serializable
 import org.xiaotianqi.kuaipiao.core.logic.typedId.impl.DtId
-import org.xiaotianqi.kuaipiao.domain.auth.UserData
-import org.xiaotianqi.kuaipiao.domain.auth.UserCreateData
-import org.xiaotianqi.kuaipiao.data.mappers.toDomain
 import org.xiaotianqi.kuaipiao.data.sources.db.dbi.user.UserDBI
+import org.xiaotianqi.kuaipiao.domain.auth.UserCreateData
+import org.xiaotianqi.kuaipiao.domain.auth.UserData
+import org.xiaotianqi.kuaipiao.data.mappers.toDomain
 import org.koin.core.annotation.Single
+import org.xiaotianqi.kuaipiao.data.sources.db.schemas.user.UserEntity
 import kotlin.time.ExperimentalTime
 
 @Single(createdAtStart = true)
@@ -17,6 +18,10 @@ class UserDao(
 ) {
     suspend fun create(userData: UserCreateData) {
         userDBI.create(userData)
+    }
+
+    suspend fun createAndReturnEntity(userData: UserCreateData): UserEntity {
+        return userDBI.createAndReturnEntity(userData)
     }
 
     suspend fun get(id: String): UserData? {

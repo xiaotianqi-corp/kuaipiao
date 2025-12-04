@@ -61,6 +61,19 @@ data class OrganizationResponse(
 )
 
 @Serializable
+data class OrganizationPayload(
+    val name: String,
+    val code: String,
+    val address: String,
+    val phone: String,
+    val email: String,
+    val country: String,
+    val city: String,
+    val metadata: String? = null,
+    val status: EntityStatus = EntityStatus.ACTIVE
+)
+
+@Serializable
 data class UpdateStatusRequest(
     val status: EntityStatus
 )

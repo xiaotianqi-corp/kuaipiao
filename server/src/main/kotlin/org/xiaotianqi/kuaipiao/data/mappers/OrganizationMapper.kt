@@ -24,7 +24,7 @@ fun OrganizationEntity.toDomain() = OrganizationData(
     metadata = metadata,
     createdAt = createdAt.toKotlinInstant(),
     updatedAt = updatedAt?.toKotlinInstant(),
-    userIds = users.map { it.id.value.toString() }
+    userIds = try { users.map { it.id.value.toString() } } catch (e: Exception) { emptyList() }
 )
 
 @ExperimentalTime
@@ -41,7 +41,7 @@ fun OrganizationEntity.toResponse() = OrganizationResponse(
     metadata = metadata,
     createdAt = createdAt.toKotlinInstant(),
     updatedAt = updatedAt?.toKotlinInstant(),
-    userIds = users.map { it.id.value.toString() }
+    userIds = try { users.map { it.id.value.toString() } } catch (e: Exception) { emptyList() }
 )
 
 @ExperimentalTime
@@ -65,7 +65,7 @@ fun OrganizationData.toResponse() = OrganizationResponse(
 fun OrganizationEntity.fromCreateData(
     data: OrganizationCreateData,
     userEntities: List<UserEntity> = emptyList()
-    ) {
+) {
     users = SizedCollection(userEntities)
     name = data.name
     code = data.code

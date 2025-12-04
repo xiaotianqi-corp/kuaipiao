@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.bundles.security)
     implementation(libs.bundles.graphql)
     implementation(libs.bundles.xmlx)
+    implementation(libs.bundles.notification)
     testImplementation(libs.bundles.testing)
 }
 

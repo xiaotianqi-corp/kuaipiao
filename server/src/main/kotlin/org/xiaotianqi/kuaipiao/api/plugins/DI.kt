@@ -20,6 +20,7 @@ import org.xiaotianqi.kuaipiao.config.ApiConfig
 import org.xiaotianqi.kuaipiao.core.security.JwtModule
 import org.xiaotianqi.kuaipiao.di.AuthModule
 import org.xiaotianqi.kuaipiao.di.SecurityModule
+import org.xiaotianqi.kuaipiao.di.dataModuleDeclarations
 
 private val logger = KotlinLogging.logger { }
 
@@ -37,9 +38,7 @@ fun Application.configureDI() {
             module {
                 single { ClientModule() }
             },
-            module {
-                single { DataModule() }
-            },
+            dataModuleDeclarations,
             module {
                 single { AuthModule() }
             },

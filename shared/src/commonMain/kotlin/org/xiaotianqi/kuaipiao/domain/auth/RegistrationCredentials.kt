@@ -8,13 +8,17 @@ import io.konform.validation.constraints.pattern
 import org.xiaotianqi.kuaipiao.validation.RegexPatterns
 import org.xiaotianqi.kuaipiao.validation.Validatable
 import kotlinx.serialization.Serializable
+import org.xiaotianqi.kuaipiao.domain.organization.OrganizationPayload
+import kotlin.time.ExperimentalTime
 
 @Serializable
+@ExperimentalTime
 data class RegistrationCredentials(
     val username: String? = null,
     val firstName: String,
     val lastName: String,
     val enterpriseId: String? = null,
+    val organization: OrganizationPayload? = null,
     val email: String,
     val password: String,
 ) : Validatable<RegistrationCredentials> {
