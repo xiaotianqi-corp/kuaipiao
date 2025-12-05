@@ -126,16 +126,16 @@ class VerifyEmailDomainRoute
 
 @Resource("/webhooks")
 @ApiRoute(
-    method = "GET",
-    summary = "Delete company by ID",
-    tag = "Company",
+    method = "POST",
+    summary = "Create email webhook",
+    tag = "Email",
     requiresAuth = true
 )
 class CreateEmailWebhookRoute
 
 @ExperimentalTime
 fun Route.emailRoutesV1() {
-    route("/emails") {
+    route("/email") {
         withPermissions("MANAGE", "CREATE", "UPDATE", "DELETE", "VIEW") {
             emailSendRoute()
             emailBatchRoute()

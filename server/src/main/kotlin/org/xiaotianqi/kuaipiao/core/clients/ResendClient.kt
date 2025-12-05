@@ -2,6 +2,7 @@ package org.xiaotianqi.kuaipiao.core.clients
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
+import io.ktor.client.call.body
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -298,6 +299,35 @@ class ResendClient : IClosableComponent {
             null
         }
     }
+
+    suspend fun createWebhook(
+        endpoint: String,
+        events: List<String>
+    ): ResendWebhookResponse? {
+
+        return try {
+            val response: HttpResponse = httpClient.post("/webhooks") {
+                setBody(
+                    ResendCreateWebhookRequest(
+                        endpoint = endpoint,
+                        events = events
+                    )
+                )
+            }
+
+            if (response.status.isSuccess()) {
+                response.body<ResendWebhookResponse>()
+            } else {
+                log.error { "Failed to create webhook. Status: ${response.status}" }
+                null
+            }
+
+        } catch (e: Exception) {
+            log.error { "Error creating webhook: ${e.message}" }
+            null
+        }
+    }
+
 
     override suspend fun close() {
         httpClient.close()

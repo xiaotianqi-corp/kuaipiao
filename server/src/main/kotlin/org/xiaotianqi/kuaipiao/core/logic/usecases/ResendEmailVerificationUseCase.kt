@@ -1,5 +1,6 @@
 package org.xiaotianqi.kuaipiao.core.logic.usecases
 
+import kotlinx.serialization.json.JsonPrimitive
 import org.xiaotianqi.kuaipiao.core.clients.ResendClient
 import org.xiaotianqi.kuaipiao.core.logic.DatetimeUtils
 import org.xiaotianqi.kuaipiao.core.logic.TokenGenerator
@@ -57,8 +58,8 @@ object ResendEmailVerificationUseCase : KoinComponent {
             template = ResendEmailTemplate(
                 id = ResendConfig.emailVerificationTemplateId,
                 variables = mapOf(
-                    "verification_url" to verificationUrl,
-                    "email" to email,
+                    "verification_url" to JsonPrimitive(verificationUrl),
+                    "email" to JsonPrimitive(email),
                 ),
             ),
         )

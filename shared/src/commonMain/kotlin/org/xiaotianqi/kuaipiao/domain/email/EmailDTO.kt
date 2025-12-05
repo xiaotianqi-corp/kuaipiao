@@ -2,7 +2,6 @@ package org.xiaotianqi.kuaipiao.domain.email
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class SendEmailDTO(
     val from: String? = null,
@@ -42,10 +41,4 @@ data class CreateContactDTO(
     val email: String,
     val firstName: String? = null,
     val lastName: String? = null,
-)
-
-@Serializable
-data class CreateWebhookDTO(
-    val endpoint: String,
-    val events: List<String>,
 )

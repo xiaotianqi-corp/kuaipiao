@@ -27,6 +27,7 @@ import kotlin.time.ExperimentalTime
 object AuthenticationMethods {
     const val EMAIL_VERIFICATION_FORM_AUTH = "email_verification_form_auth"
     const val USER_SESSION_AUTH = "user_session_auth"
+    const val BEARER_AUTH = "bearer_auth"
 }
 
 @ExperimentalTime
@@ -104,6 +105,24 @@ fun Application.configureSecurity() {
 
             challenge {
                 call.respond(HttpStatusCode.Unauthorized)
+            }
+        }
+
+        /** BEARER AUTH **/
+        bearer(AuthenticationMethods.BEARER_AUTH) {
+            authenticate { tokenCredential ->
+                val token = tokenCredential.token
+                val principal = jwtService.verifyToken(token)
+                if (principal != null) {
+                    UserAuthSessionData(
+                        id = principal.userId,
+                        userId = principal.userId,
+                        iat = System.currentTimeMillis(),
+                        deviceName = null,
+                        ip = "",
+                        token = token
+                    )
+                } else null
             }
         }
     }
