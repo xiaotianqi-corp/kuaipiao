@@ -37,7 +37,7 @@ class UserDao(
     }
 
     suspend fun getFromEmail(email: String): UserData? {
-        return userDBI.get(email)?.toDomain()
+        return userDBI.getByEmail(email)
     }
 
     suspend fun verifyEmail(id:  DtId<UserData>) {

@@ -14,7 +14,7 @@ interface UserDBI : DBI {
     suspend fun get(id: String): UserEntity?
     suspend fun getAll(page: Int = 0, limit: Int = 50): List<UserEntity>
     suspend fun updateStatus(id: DtId<UserData>, isActive: Boolean): Int
-    suspend fun getByEmail(email: String): UserEntity?
+    suspend fun getByEmail(email: String): UserData?
     suspend fun verifyEmail(id: DtId<UserData>): Int
     suspend fun resetPassword(id: DtId<UserData>, newPasswordHashed: String, verifyEmail: Boolean): Int
     suspend fun delete(id: DtId<UserData>): Int

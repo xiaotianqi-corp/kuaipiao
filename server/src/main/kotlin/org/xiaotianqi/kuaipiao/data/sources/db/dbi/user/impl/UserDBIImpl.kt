@@ -1,5 +1,6 @@
 package org.xiaotianqi.kuaipiao.data.sources.db.dbi.user.impl
 
+import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
@@ -14,6 +15,8 @@ import org.xiaotianqi.kuaipiao.data.sources.db.toEntityId
 import java.util.UUID
 import kotlin.time.ExperimentalTime
 import kotlin.time.toJavaInstant
+import org.xiaotianqi.kuaipiao.data.mappers.toDomain
+import kotlin.time.toKotlinInstant
 
 @Single(createdAtStart = true)
 @ExperimentalTime
@@ -65,8 +68,12 @@ class UserDBIImpl : UserDBI {
         }
     }
 
-    override suspend fun getByEmail(email: String): UserEntity? = dbQuery {
-        UserEntity.find { UsersTable.email eq email }.limit(1).firstOrNull()
+    override suspend fun getByEmail(email: String): UserData? = dbQuery {
+        UserEntity.find { UsersTable.email eq email }
+            .with(UserEntity::enterprise, UserEntity::organizations, UserEntity::roles)
+            .limit(1)
+            .firstOrNull()
+            ?.toDomain()
     }
 
     override suspend fun verifyEmail(id: DtId<UserData>) = dbQuery {
