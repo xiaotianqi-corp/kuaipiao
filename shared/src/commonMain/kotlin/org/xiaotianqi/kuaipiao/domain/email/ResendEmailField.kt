@@ -18,13 +18,7 @@ data class ResendEmailRequest(
     val scheduled_at: String? = null,
     val attachments: List<ResendAttachmentRequest>? = null,
     val tags: List<ResendTag>? = null,
-) {
-    init {
-        require(html != null || text != null || template != null) {
-            "At least one of html, text, or template must be provided"
-        }
-    }
-}
+)
 
 @Serializable
 data class ResendEmailTemplate(

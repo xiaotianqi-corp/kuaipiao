@@ -17,6 +17,7 @@ import org.koin.logger.slf4jLogger
 import org.koin.core.logger.Level
 import org.koin.ktor.ext.getKoin
 import org.xiaotianqi.kuaipiao.config.ApiConfig
+import org.xiaotianqi.kuaipiao.core.clients.ResendClient
 import org.xiaotianqi.kuaipiao.core.security.JwtModule
 import org.xiaotianqi.kuaipiao.di.AuthModule
 import org.xiaotianqi.kuaipiao.di.SecurityModule
@@ -37,6 +38,9 @@ fun Application.configureDI() {
             },
             module {
                 single { ClientModule() }
+            },
+            module {
+                single { ResendClient() }
             },
             dataModuleDeclarations,
             module {
