@@ -3,8 +3,19 @@ package org.xiaotianqi.kuaipiao.scripts
 import io.ktor.resources.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.json.Json.Default.parseToJsonElement
+import org.xiaotianqi.kuaipiao.domain.auth.UserResponse
+import org.xiaotianqi.kuaipiao.domain.enterprise.EnterpriseResponse
+import org.xiaotianqi.kuaipiao.domain.organization.OrganizationResponse
 import kotlin.reflect.full.findAnnotation
 import java.io.File
+import kotlin.time.ExperimentalTime
+
+object ApiDocConfig {
+    const val API_BASE_URL_DEV = "http://localhost:8080"
+    const val API_BASE_URL_PROD = "https://app.xiaotianqi.com/kuaipiao"
+    const val API_BASE_PATH = "/api/v1"
+    const val DEFAULT_SERVER_URL = API_BASE_URL_DEV
+}
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -33,24 +44,29 @@ fun main() {
 }
 
 private val json = Json { prettyPrint = true }
+private val DOMAIN_ROOT = "org.xiaotianqi.kuaipiao"
 
 fun generateOpenApiFromClassPath() {
     println("📄 Scanning classpath for @Resource classes...")
+    println("🌍 Using server: ${ApiDocConfig.DEFAULT_SERVER_URL}")
 
-    val basePath = "/api/v1"
+    val basePath = ApiDocConfig.API_BASE_PATH
     val pathsMap = mutableMapOf<String, MutableMap<String, JsonElement>>()
+
+    // ⭐ GENERAR SCHEMAS PRIMERO
+    println("📋 Pre-generating component schemas...")
+    val componentSchemas = buildComponentSchemas()
 
     val resourcePackages = listOf(
         "org.xiaotianqi.kuaipiao.api.routing.v1.auth",
+        "org.xiaotianqi.kuaipiao.api.routing.v1.email",
         "org.xiaotianqi.kuaipiao.api.routing.v1.company",
         "org.xiaotianqi.kuaipiao.api.routing.v1.organization",
         "org.xiaotianqi.kuaipiao.api.routing.v1.enterprise"
     )
 
-    // Mapa de prefijos por clase
     val classPrefixes = mutableMapOf<String, String>()
 
-    // Primero, extraer todos los prefijos de los archivos fuente
     resourcePackages.forEach { packageName ->
         val routeFiles = findSourceRouteFiles(packageName)
         routeFiles.forEach { file ->
@@ -70,7 +86,6 @@ fun generateOpenApiFromClassPath() {
                 val apiRoute = kClass.findAnnotation<ApiRoute>()
 
                 if (resourceAnnotation != null && apiRoute != null) {
-                    // Obtener el prefijo de la clase
                     val prefix = classPrefixes[clazz.simpleName] ?: ""
                     val fullPath = basePath + prefix + resourceAnnotation.path
                     val method = apiRoute.method.lowercase()
@@ -138,7 +153,12 @@ fun generateOpenApiFromClassPath() {
                                                 put("schema", parseToJsonElement(responseSchema))
                                             } else {
                                                 putJsonObject("schema") {
-                                                    put("\$ref", "#/components/schemas/$responseSchema")
+                                                    if (componentSchemas["schemas"]!!.jsonObject.containsKey(responseSchema)) {
+                                                        put("\$ref", "#/components/schemas/$responseSchema")
+                                                    } else {
+                                                        println("❌ ERROR: Schema NO generado -> $responseSchema")
+                                                        put("type", "object")
+                                                    }
                                                 }
                                             }
                                             if (exampleResponse.isNotEmpty()) {
@@ -165,18 +185,6 @@ fun generateOpenApiFromClassPath() {
                                         putJsonObject("schema") {
                                             put("\$ref", "#/components/schemas/ErrorResponse")
                                         }
-                                        putJsonObject("example") {
-                                            putJsonArray("errors") {
-                                                addJsonObject {
-                                                    put("message", "Invalid request parameters")
-                                                    put("long_message", "The request contains invalid or missing parameters")
-                                                    put("code", "validation_error")
-                                                    put("meta", JsonObject(emptyMap()))
-                                                }
-                                            }
-                                            put("meta", JsonObject(emptyMap()))
-                                            put("clerk_trace_id", "trace_12345")
-                                        }
                                     }
                                 }
                             }
@@ -189,18 +197,6 @@ fun generateOpenApiFromClassPath() {
                                             putJsonObject("schema") {
                                                 put("\$ref", "#/components/schemas/ErrorResponse")
                                             }
-                                            putJsonObject("example") {
-                                                putJsonArray("errors") {
-                                                    addJsonObject {
-                                                        put("message", "Authentication required")
-                                                        put("long_message", "Valid authentication credentials are required")
-                                                        put("code", "authentication_required")
-                                                        put("meta", JsonObject(emptyMap()))
-                                                    }
-                                                }
-                                                put("meta", JsonObject(emptyMap()))
-                                                put("clerk_trace_id", "trace_12345")
-                                            }
                                         }
                                     }
                                 }
@@ -212,18 +208,6 @@ fun generateOpenApiFromClassPath() {
                                     putJsonObject("application/json") {
                                         putJsonObject("schema") {
                                             put("\$ref", "#/components/schemas/ErrorResponse")
-                                        }
-                                        putJsonObject("example") {
-                                            putJsonArray("errors") {
-                                                addJsonObject {
-                                                    put("message", "Validation failed")
-                                                    put("long_message", "The provided data failed validation checks")
-                                                    put("code", "validation_failed")
-                                                    put("meta", JsonObject(emptyMap()))
-                                                }
-                                            }
-                                            put("meta", JsonObject(emptyMap()))
-                                            put("clerk_trace_id", "trace_12345")
                                         }
                                     }
                                 }
@@ -264,13 +248,13 @@ fun generateOpenApiFromClassPath() {
         put("openapi", "3.0.0")
 
         putJsonObject("info") {
-            put("title", "KuaiPiao OpenAPI")
+            put("title", "KuaiPiao Docs")
             put("version", "1.0.0")
             put("description", "Comprehensive API documentation for KuaiPiao - Invoice Processing & Management Platform")
             putJsonObject("contact") {
                 put("name", "KuaiPiao Support")
-                put("url", "https://kuaipiao.com")
-                put("email", "support@kuaipiao.com")
+                put("url", "https://xiaotianqi.com/support")
+                put("email", "support@xiaotianqi.com")
             }
             putJsonObject("license") {
                 put("name", "Apache 2.0")
@@ -279,152 +263,14 @@ fun generateOpenApiFromClassPath() {
         }
 
         putJsonArray("servers") {
-            addJsonObject { put("url", "http://localhost:8080"); put("description", "Development") }
-            addJsonObject { put("url", "https://api.kuaipiao.com"); put("description", "Production") }
+            addJsonObject { put("url", ApiDocConfig.API_BASE_URL_DEV); put("description", "Development") }
+            addJsonObject { put("url", ApiDocConfig.API_BASE_URL_PROD); put("description", "Production") }
         }
 
         put("paths", paths)
 
-        putJsonObject("components") {
-            putJsonObject("securitySchemes") {
-                putJsonObject("SessionAuth") {
-                    put("type", "apiKey")
-                    put("name", "user_session_id")
-                    put("in", "cookie")
-                    put("description", "Session cookie")
-                }
-                putJsonObject("JWTAuth") {
-                    put("type", "http")
-                    put("scheme", "bearer")
-                    put("bearerFormat", "JWT")
-                    put("description", "JWT token")
-                }
-            }
-            putJsonObject("schemas") {
-                putJsonObject("ErrorResponse") {
-                    put("type", "object")
-                    put("additionalProperties", false)
-                    putJsonObject("properties") {
-                        putJsonObject("errors") {
-                            put("type", "array")
-                            putJsonObject("items") {
-                                put("\$ref", "#/components/schemas/Error")
-                            }
-                        }
-                        putJsonObject("meta") {
-                            put("type", "object")
-                        }
-                        putJsonObject("clerk_trace_id") {
-                            put("type", "string")
-                        }
-                    }
-                    putJsonArray("required") { add("errors"); add("meta") }
-                }
-                putJsonObject("Error") {
-                    put("type", "object")
-                    putJsonObject("properties") {
-                        putJsonObject("message") {
-                            put("type", "string")
-                        }
-                        putJsonObject("long_message") {
-                            put("type", "string")
-                        }
-                        putJsonObject("code") {
-                            put("type", "string")
-                        }
-                        putJsonObject("meta") {
-                            put("type", "object")
-                        }
-                    }
-                    putJsonArray("required") { add("message"); add("code") }
-                }
-
-                putJsonObject("UserResponse") {
-                    put("type", "object")
-                    putJsonObject("properties") {
-                        putJsonObject("id") { put("type", "string") }
-                        putJsonObject("username") { put("type", "string") }
-                        putJsonObject("email") { put("type", "string") }
-                        putJsonObject("firstName") { put("type", "string") }
-                        putJsonObject("lastName") { put("type", "string") }
-                        putJsonObject("enterpriseId") { put("type", "string") }
-                        putJsonObject("organizationIds") {
-                            put("type", "array")
-                            putJsonObject("items") { put("type", "string") }
-                        }
-                        putJsonObject("roleIds") {
-                            put("type", "array")
-                            putJsonObject("items") { put("type", "string") }
-                        }
-                        putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
-                        putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
-                    }
-                    putJsonArray("required") { add("id"); add("email"); add("firstName"); add("lastName") }
-                }
-
-                putJsonObject("LoginCredentials") {
-                    put("type", "object")
-                    putJsonObject("properties") {
-                        putJsonObject("email") { put("type", "string") }
-                        putJsonObject("password") { put("type", "string") }
-                    }
-                    putJsonArray("required") { add("email"); add("password") }
-                }
-
-                putJsonObject("RegistrationCredentials") {
-                    put("type", "object")
-                    putJsonObject("properties") {
-                        putJsonObject("firstName") { put("type", "string") }
-                        putJsonObject("lastName") { put("type", "string") }
-                        putJsonObject("email") { put("type", "string") }
-                        putJsonObject("password") { put("type", "string") }
-                        putJsonObject("enterpriseId") { put("type", "string") }
-                    }
-                    putJsonArray("required") { add("firstName"); add("lastName"); add("email"); add("password") }
-                }
-
-                putJsonObject("CompanyResponse") {
-                    put("type", "object")
-                    putJsonObject("properties") {
-                        putJsonObject("id") { put("type", "string") }
-                        putJsonObject("name") { put("type", "string") }
-                        putJsonObject("taxId") { put("type", "string") }
-                        putJsonObject("industry") { put("type", "string") }
-                        putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
-                        putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
-                    }
-                    putJsonArray("required") { add("id"); add("name"); add("taxId") }
-                }
-
-                putJsonObject("OrganizationResponse") {
-                    put("type", "object")
-                    putJsonObject("properties") {
-                        putJsonObject("id") { put("type", "string") }
-                        putJsonObject("name") { put("type", "string") }
-                        putJsonObject("code") { put("type", "string") }
-                        putJsonObject("status") { put("type", "string") }
-                        putJsonObject("enterpriseId") { put("type", "string") }
-                        putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
-                        putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
-                    }
-                    putJsonArray("required") { add("id"); add("name"); add("code"); add("status") }
-                }
-
-                putJsonObject("EnterpriseResponse") {
-                    put("type", "object")
-                    putJsonObject("properties") {
-                        putJsonObject("id") { put("type", "string") }
-                        putJsonObject("name") { put("type", "string") }
-                        putJsonObject("subdomain") { put("type", "string") }
-                        putJsonObject("status") { put("type", "string") }
-                        putJsonObject("plan") { put("type", "string") }
-                        putJsonObject("createdAt") { put("type", "string"); put("format", "date-time") }
-                        putJsonObject("updatedAt") { put("type", "string"); put("format", "date-time") }
-                    }
-                    putJsonArray("required") { add("id"); add("name"); add("subdomain"); add("status") }
-                }
-            }
-        }
+        // ✅ USAR EL OBJETO COMPLETO DE COMPONENTS
+        put("components", componentSchemas)
     }
 
     val outputDir = File("src/main/resources")
@@ -435,6 +281,151 @@ fun generateOpenApiFromClassPath() {
 
     File(outputDir, "api.yaml").writeText(convertToYaml(spec))
     println("✅ api.yaml: ${outputDir.absolutePath}/api.yaml")
+}
+
+// ✅ CORREGIDO: Retorna el objeto completo de components con schemas y securitySchemes
+@OptIn(ExperimentalTime::class)
+fun buildComponentSchemas(): JsonObject {
+    return buildJsonObject {
+        // Schemas de DTOs
+        putJsonObject("schemas") {
+            addErrorSchemas()
+
+            println("🔍 Generating schemas from DTOs...")
+
+            val dtoClasses = listOf(
+                EnterpriseResponse::class,
+                UserResponse::class,
+                OrganizationResponse::class,
+                MessageResponse::class,
+                VerificationMessageResponse::class
+            )
+
+            dtoClasses.filter {
+                it.simpleName.endsWith("Response") ||
+                        it.simpleName.endsWith("DTO") ||
+                        it.simpleName.endsWith("Request") ||
+                        it.simpleName.endsWith("Data")
+            }.forEach { clazz ->
+                val schemaName = clazz.simpleName
+                try {
+                    val schema = generateSchemaFromClass(clazz)
+                    put(schemaName, schema)
+                    println("  📋 Schema generated: $schemaName")
+                } catch (e: Exception) {
+                    println("  ⚠️  Error generating schema for ${clazz.simpleName}: ${e.message}")
+                }
+            }
+        }
+
+        // Security schemes
+        putJsonObject("securitySchemes") {
+            putJsonObject("SessionAuth") {
+                put("type", "apiKey")
+                put("name", "user_session_id")
+                put("in", "cookie")
+                put("description", "Session cookie")
+            }
+            putJsonObject("JWTAuth") {
+                put("type", "http")
+                put("scheme", "bearer")
+                put("bearerFormat", "JWT")
+                put("description", "JWT token")
+            }
+            putJsonObject("BearerAuth") {
+                put("type", "http")
+                put("scheme", "bearer")
+                put("bearerFormat", "JWT")
+                put("description", "Bearer token for Resend/API")
+            }
+        }
+    }
+}
+
+// ✅ CORREGIDO: Ahora es una función de extensión que opera dentro del contexto de schemas
+private fun JsonObjectBuilder.addErrorSchemas() {
+    putJsonObject("ErrorResponse") {
+        put("type", "object")
+        put("additionalProperties", false)
+        putJsonObject("properties") {
+            putJsonObject("errors") {
+                put("type", "array")
+                putJsonObject("items") { put("\$ref", "#/components/schemas/Error") }
+            }
+            putJsonObject("meta") { put("type", "object") }
+            putJsonObject("clerk_trace_id") { put("type", "string") }
+        }
+        putJsonArray("required") { add("errors"); add("meta") }
+    }
+
+    putJsonObject("Error") {
+        put("type", "object")
+        putJsonObject("properties") {
+            putJsonObject("message") { put("type", "string") }
+            putJsonObject("long_message") { put("type", "string") }
+            putJsonObject("code") { put("type", "string") }
+            putJsonObject("meta") { put("type", "object") }
+        }
+        putJsonArray("required") { add("message"); add("code") }
+    }
+}
+
+fun generateSchemaFromClass(clazz: Class<*>): JsonObject {
+    return buildJsonObject {
+        put("type", "object")
+
+        val properties = mutableMapOf<String, JsonElement>()
+        val required = mutableListOf<String>()
+
+        clazz.declaredFields.forEach { field ->
+            field.isAccessible = true
+            val fieldName = field.name
+            val fieldType = field.type
+            val isNullable = !fieldType.isPrimitive && field.type != String::class.java
+
+            val propertySchema = buildJsonObject {
+                when {
+                    fieldType == String::class.java -> put("type", "string")
+                    fieldType == Int::class.java || fieldType == Integer::class.java -> put("type", "integer")
+                    fieldType == Boolean::class.java || fieldType == java.lang.Boolean::class.java -> put("type", "boolean")
+                    fieldType == Long::class.java -> {
+                        put("type", "integer")
+                        put("format", "int64")
+                    }
+                    fieldType == Double::class.java || fieldType == Float::class.java -> put("type", "number")
+                    fieldType.name.contains("java.time") || fieldType.name.contains("kotlin.time") -> {
+                        put("type", "string")
+                        put("format", "date-time")
+                    }
+                    fieldType.isArray || fieldType.name.contains("List") -> {
+                        put("type", "array")
+                        putJsonObject("items") { put("type", "string") }
+                    }
+                    fieldType.name.contains("Map") -> {
+                        put("type", "object")
+                    }
+                    else -> put("type", "string")
+                }
+            }
+
+            properties[fieldName] = propertySchema
+            if (!isNullable || fieldName !in listOf("updatedAt", "deletedAt", "lastLoginAt")) {
+                required.add(fieldName)
+            }
+        }
+
+        putJsonObject("properties") {
+            properties.forEach { (name, schema) ->
+                put(name, schema)
+            }
+        }
+
+        if (required.isNotEmpty()) {
+            putJsonArray("required") {
+                required.forEach { add(it) }
+            }
+        }
+    }
 }
 
 fun findSourceRouteFiles(packageName: String): List<File> {
@@ -490,7 +481,7 @@ fun extractAllRoutePrefixes(file: File): Map<String, String> {
 
 fun buildCurlExample(path: String, method: String, exampleRequest: String, requiresAuth: Boolean): String {
     return buildString {
-        append("curl https://api.kuaipiao.com$path")
+        append("curl ${ApiDocConfig.DEFAULT_SERVER_URL}$path")
         append(" \\\n  --request ${method.uppercase()}")
         append(" \\\n  --header 'Content-Type: application/json'")
 
@@ -502,6 +493,41 @@ fun buildCurlExample(path: String, method: String, exampleRequest: String, requi
             append(" \\\n  --data '$exampleRequest'")
         }
     }
+}
+
+fun findAllClassesInPackageRecursive(rootPackage: String): List<Class<*>> {
+    val classes = mutableListOf<Class<*>>()
+    val classLoader = Thread.currentThread().contextClassLoader
+    val path = rootPackage.replace(".", "/")
+
+    try {
+        val resources = classLoader.getResources(path)
+        while (resources.hasMoreElements()) {
+            val resource = resources.nextElement()
+            if (resource.protocol == "file") {
+                val file = File(resource.toURI())
+                if (file.isDirectory) {
+                    file.walk().forEach { f ->
+                        if (f.isFile && f.name.endsWith(".class")) {
+                            val relativePath = f.relativeTo(file.parentFile).path
+                            val className = rootPackage + "." +
+                                    relativePath.substring(0, relativePath.length - 6)
+                                        .replace(File.separator, ".")
+                            try {
+                                classes.add(Class.forName(className))
+                            } catch (_: Exception) {
+                                // Skip
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } catch (_: Exception) {
+        println("⚠️  Could not scan: $rootPackage")
+    }
+
+    return classes
 }
 
 fun findClassesInPackage(packageName: String): List<Class<*>> {
@@ -522,7 +548,7 @@ fun findClassesInPackage(packageName: String): List<Class<*>> {
                                     f.name.substring(0, f.name.length - 6).replace(File.separator, ".")
                             try {
                                 classes.add(Class.forName(className))
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 // Skip
                             }
                         }
@@ -530,7 +556,7 @@ fun findClassesInPackage(packageName: String): List<Class<*>> {
                 }
             }
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         println("⚠️  Could not scan: $packageName")
     }
 

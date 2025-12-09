@@ -1,5 +1,3 @@
-@file:OptIn(OpenApiPreview::class)
-
 import io.ktor.plugin.OpenApiPreview
 
 plugins {
